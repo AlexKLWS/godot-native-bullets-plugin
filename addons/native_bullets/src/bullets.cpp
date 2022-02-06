@@ -108,6 +108,8 @@ void Bullets::mount(Node2D* bullets_environment) {
 	this->bullets_environment = bullets_environment;
 	this->bullets_environment->set("current", true);
 
+	VisualServer::get_singleton()->canvas_item_set_parent(this->get_canvas_item(), bullets_environment->get_canvas_item());
+
 	Array bullet_kits = bullets_environment->get("bullet_kits");
 	Array pools_sizes = bullets_environment->get("pools_sizes");
 	Array z_indices = bullets_environment->get("z_indices");
