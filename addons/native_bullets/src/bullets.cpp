@@ -97,7 +97,7 @@ int32_t Bullets::_get_pool_index(int32_t set_index, int32_t bullet_index) {
 	return -1;
 }
 
-void Bullets::mount(Node* bullets_environment) {
+void Bullets::mount(Node2D* bullets_environment) {
 	if(bullets_environment == nullptr || this->bullets_environment == bullets_environment) {
 		return;
 	}

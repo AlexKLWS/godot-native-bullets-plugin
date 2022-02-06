@@ -1,5 +1,5 @@
 tool
-extends Node
+extends Node2D
 class_name BulletsEnvironment, "icons/icon_bullets_environment.svg"
 
 

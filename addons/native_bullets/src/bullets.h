@@ -62,7 +62,7 @@ public:
 
 	void _physics_process(float delta);
 
-	void mount(Node* bullets_environment);
+	void mount(Node2D* bullets_environment);
 	void unmount(Node* bullets_environment);
 	Node* get_bullets_environment();
 
