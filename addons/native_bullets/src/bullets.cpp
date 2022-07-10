@@ -163,7 +163,7 @@ void Bullets::mount(Node2D* bullets_environment) {
 			Physics2DServer::get_singleton()->area_set_collision_layer(shared_area, first_kit->collision_layer);
 			Physics2DServer::get_singleton()->area_set_collision_mask(shared_area, first_kit->collision_mask);
 			Physics2DServer::get_singleton()->area_set_monitorable(shared_area, true);
-			Physics2DServer::get_singleton()->area_set_space(shared_area, get_world_2d()->get_space());
+			Physics2DServer::get_singleton()->area_set_space(shared_area, bullets_environment->get_viewport()->find_world_2d()->get_space());
 
 			shared_areas.append(shared_area);
 			areas_to_pool_set_indices[shared_area] = i;
