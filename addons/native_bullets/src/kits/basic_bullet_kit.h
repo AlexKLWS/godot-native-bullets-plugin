@@ -8,51 +8,57 @@
 
 using namespace godot;
 
-
 // Bullet kit definition.
-class BasicBulletKit : public BulletKit {
+class BasicBulletKit : public BulletKit
+{
 	GODOT_CLASS(BasicBulletKit, BulletKit)
 public:
 	BULLET_KIT(BasicBulletsPool)
 
 	Ref<Texture> texture;
 
-	static void _register_methods() {
-		register_property<BasicBulletKit, Ref<Texture>>("texture", &BasicBulletKit::texture, Ref<Texture>(), 
-			GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Texture");
-		
-		BULLET_KIT_REGISTRATION(BasicBulletKit, Bullet)
+	static void _register_methods()
+	{
+		register_property<BasicBulletKit, Ref<Texture>>("texture", &BasicBulletKit::texture, Ref<Texture>(),
+																										GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Texture");
+
+		BULLET_KIT_REGISTRATION(BasicBulletKit, Unit)
 	}
 };
 
 // Bullets pool definition.
-class BasicBulletsPool : public AbstractBulletsPool<BasicBulletKit, Bullet> {
+class BasicBulletsPool : public AbstractBulletsPool<BasicBulletKit, Unit>
+{
 
 	// void _init_bullet(Bullet* bullet); Use default implementation.
 
-	void _enable_bullet(Bullet* bullet) {
+	void _enable_bullet(Unit *bullet)
+	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
 		Rect2 texture_rect = Rect2(-kit->texture->get_size() / 2.0f, kit->texture->get_size());
 		RID texture_rid = kit->texture->get_rid();
-		
+
 		// Configure the bullet to draw the kit texture each frame.
 		VisualServer::get_singleton()->canvas_item_add_texture_rect(bullet->item_rid,
-			texture_rect,
-			texture_rid);
+																																texture_rect,
+																																texture_rid);
 	}
 
 	// void _disable_bullet(Bullet* bullet); Use default implementation.
 
-	bool _process_bullet(Bullet* bullet, float delta) {
+	bool _process_bullet(Unit *bullet, float delta)
+	{
 		bullet->transform.set_origin(bullet->transform.get_origin() + bullet->velocity * delta);
 
-		if(!active_rect.has_point(bullet->transform.get_origin())) {
+		if (!active_rect.has_point(bullet->transform.get_origin()))
+		{
 			// Return true if the bullet should be deleted.
 			return true;
 		}
 		// Rotate the bullet based on its velocity "rotate" is enabled.
-		if(kit->rotate) {
+		if (kit->rotate)
+		{
 			bullet->transform.set_rotation(bullet->velocity.angle());
 		}
 		// Bullet is still alive, increase its lifetime.

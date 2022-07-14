@@ -17,19 +17,21 @@
 
 using namespace godot;
 
-
-class Bullets : public Node2D {
+class Bullets : public Node2D
+{
 	GODOT_CLASS(Bullets, Node2D)
-	
+
 private:
 	// A pool internal representation with related properties.
-	struct PoolKit {
+	struct PoolKit
+	{
 		std::unique_ptr<BulletsPool> pool;
 		Ref<BulletKit> bullet_kit;
 		int32_t size;
 		int32_t z_index;
 	};
-	struct PoolKitSet {
+	struct PoolKitSet
+	{
 		std::vector<PoolKit> pools;
 		int32_t bullets_amount;
 	};
@@ -40,7 +42,7 @@ private:
 	// Maps each BulletKit to the corresponding PoolKit index.
 	Dictionary kits_to_set_pool_indices;
 
-	Node* bullets_environment = nullptr;
+	Node *bullets_environment = nullptr;
 
 	int32_t available_bullets = 0;
 	int32_t active_bullets = 0;
@@ -62,13 +64,15 @@ public:
 
 	void _physics_process(float delta);
 
-	void mount(Node2D* bullets_environment);
-	void unmount(Node* bullets_environment);
-	Node* get_bullets_environment();
+	void mount(Node2D *bullets_environment);
+	void unmount(Node *bullets_environment);
+	Node *get_bullets_environment();
 
 	bool spawn_bullet(Ref<BulletKit> kit, Dictionary properties);
 	Variant obtain_bullet(Ref<BulletKit> kit);
 	bool release_bullet(Variant id);
+	bool release_all_bullets_for_kit(Ref<BulletKit> kit);
+	bool release_all_bullets_for_kit_in_radius(Ref<BulletKit> kit, Vector2 from, float distance);
 
 	bool is_bullet_valid(Variant id);
 	bool is_kit_valid(Ref<BulletKit> kit);
