@@ -63,12 +63,12 @@ public:
 };
 
 // Bullets pool definition.
-class FollowingBulletsPool : public AbstractBulletsPool<FollowingBulletKit, FollowingBullet>
+class FollowingBulletsPool : public AbstractUnitPool<FollowingBulletKit, FollowingBullet>
 {
 
 	// void _init_bullet(FollowingBullet* bullet); Use default implementation.
 
-	void _enable_bullet(FollowingBullet *bullet)
+	void _enable_unit(FollowingBullet *bullet)
 	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
@@ -81,9 +81,9 @@ class FollowingBulletsPool : public AbstractBulletsPool<FollowingBulletKit, Foll
 																																texture_rid);
 	}
 
-	// void _disable_bullet(FollowingBullet* bullet); Use default implementation.
+	// void _disable_unit(FollowingBullet* bullet); Use default implementation.
 
-	bool _process_bullet(FollowingBullet *bullet, float delta)
+	bool _process_unit(FollowingBullet *bullet, float delta)
 	{
 		if (bullet->target_node != nullptr)
 		{

@@ -102,12 +102,12 @@ public:
 };
 
 // Bullets pool definition.
-class FollowingDynamicBulletsPool : public AbstractBulletsPool<FollowingDynamicBulletKit, FollowingDynamicBullet>
+class FollowingDynamicBulletsPool : public AbstractUnitPool<FollowingDynamicBulletKit, FollowingDynamicBullet>
 {
 
 	// void _init_bullet(FollowingDynamicBullet* bullet); Use default implementation.
 
-	void _enable_bullet(FollowingDynamicBullet *bullet)
+	void _enable_unit(FollowingDynamicBullet *bullet)
 	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
@@ -120,9 +120,9 @@ class FollowingDynamicBulletsPool : public AbstractBulletsPool<FollowingDynamicB
 																																texture_rid);
 	}
 
-	// void _disable_bullet(FollowingDynamicBullet* bullet); Use default implementation.
+	// void _disable_unit(FollowingDynamicBullet* bullet); Use default implementation.
 
-	bool _process_bullet(FollowingDynamicBullet *bullet, float delta)
+	bool _process_unit(FollowingDynamicBullet *bullet, float delta)
 	{
 		float adjusted_lifetime = bullet->lifetime / kit->lifetime_curves_span;
 		if (kit->lifetime_curves_loop)

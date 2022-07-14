@@ -254,14 +254,14 @@ bool Bullets::spawn_bullet(Ref<BulletKit> kit, Dictionary properties)
 	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
 	{
 		PoolIntArray set_pool_indices = kits_to_set_pool_indices[kit].operator PoolIntArray();
-		BulletsPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
+		UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
 
-		if (pool->get_available_bullets() > 0)
+		if (pool->get_available_units() > 0)
 		{
 			available_bullets -= 1;
 			active_bullets += 1;
 
-			pool->spawn_bullet(properties);
+			pool->spawn_unit(properties);
 			return true;
 		}
 	}
@@ -273,14 +273,14 @@ Variant Bullets::obtain_bullet(Ref<BulletKit> kit)
 	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
 	{
 		PoolIntArray set_pool_indices = kits_to_set_pool_indices[kit].operator PoolIntArray();
-		BulletsPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
+		UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
 
-		if (pool->get_available_bullets() > 0)
+		if (pool->get_available_units() > 0)
 		{
 			available_bullets -= 1;
 			active_bullets += 1;
 
-			BulletID bullet_id = pool->obtain_bullet();
+			BulletID bullet_id = pool->obtain_unit();
 			PoolIntArray to_return = invalid_id;
 			to_return.set(0, bullet_id.index);
 			to_return.set(1, bullet_id.cycle);
@@ -299,7 +299,7 @@ bool Bullets::release_bullet(Variant id)
 	int32_t pool_index = _get_pool_index(bullet_id[2], bullet_id[0]);
 	if (pool_index >= 0)
 	{
-		result = pool_sets[bullet_id[2]].pools[pool_index].pool->release_bullet(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]));
+		result = pool_sets[bullet_id[2]].pools[pool_index].pool->release_unit(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]));
 		if (result)
 		{
 			available_bullets += 1;
@@ -315,12 +315,12 @@ bool Bullets::release_all_bullets_for_kit(Ref<BulletKit> kit)
 	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
 	{
 		PoolIntArray set_pool_indices = kits_to_set_pool_indices[kit].operator PoolIntArray();
-		BulletsPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
+		UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
 
-		if (pool->get_available_bullets() > 0)
+		if (pool->get_available_units() > 0)
 		{
-			int32_t pool_active_bullets = pool->get_active_bullets();
-			result = pool->release_all_bullets();
+			int32_t pool_active_bullets = pool->get_active_units();
+			result = pool->release_all_units();
 			if (result)
 			{
 				available_bullets += pool_active_bullets;
@@ -343,7 +343,7 @@ bool Bullets::is_bullet_valid(Variant id)
 	int32_t pool_index = _get_pool_index(bullet_id[2], bullet_id[0]);
 	if (pool_index >= 0)
 	{
-		return pool_sets[bullet_id[2]].pools[pool_index].pool->is_bullet_valid(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]));
+		return pool_sets[bullet_id[2]].pools[pool_index].pool->is_unit_valid(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]));
 	}
 	return false;
 }
@@ -358,7 +358,7 @@ int32_t Bullets::get_available_bullets(Ref<BulletKit> kit)
 	if (kits_to_set_pool_indices.has(kit))
 	{
 		PoolIntArray set_pool_indices = kits_to_set_pool_indices[kit];
-		return pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool->get_available_bullets();
+		return pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool->get_available_units();
 	}
 	return 0;
 }
@@ -368,7 +368,7 @@ int32_t Bullets::get_active_bullets(Ref<BulletKit> kit)
 	if (kits_to_set_pool_indices.has(kit))
 	{
 		PoolIntArray set_pool_indices = kits_to_set_pool_indices[kit];
-		return pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool->get_active_bullets();
+		return pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool->get_active_units();
 	}
 	return 0;
 }
@@ -413,7 +413,7 @@ bool Bullets::is_bullet_existing(RID area_rid, int32_t shape_index)
 	int32_t pool_index = _get_pool_index(set_index, shape_index);
 	if (pool_index >= 0)
 	{
-		return pool_sets[set_index].pools[pool_index].pool->is_bullet_existing(shape_index);
+		return pool_sets[set_index].pools[pool_index].pool->does_unit_exist(shape_index);
 	}
 	return false;
 }
@@ -428,7 +428,7 @@ Variant Bullets::get_bullet_from_shape(RID area_rid, int32_t shape_index)
 	int32_t pool_index = _get_pool_index(set_index, shape_index);
 	if (pool_index >= 0)
 	{
-		BulletID result = pool_sets[set_index].pools[pool_index].pool->get_bullet_from_shape(shape_index);
+		BulletID result = pool_sets[set_index].pools[pool_index].pool->get_unit_from_shape(shape_index);
 
 		PoolIntArray to_return = invalid_id;
 		to_return.set(0, result.index);
@@ -444,7 +444,7 @@ Ref<BulletKit> Bullets::get_kit_from_bullet(Variant id)
 	PoolIntArray bullet_id = id.operator PoolIntArray();
 
 	int32_t pool_index = _get_pool_index(bullet_id[2], bullet_id[0]);
-	if (pool_index >= 0 && pool_sets[bullet_id[2]].pools[pool_index].pool->is_bullet_valid(BulletID(bullet_id[0], bullet_id[1], bullet_id[2])))
+	if (pool_index >= 0 && pool_sets[bullet_id[2]].pools[pool_index].pool->is_unit_valid(BulletID(bullet_id[0], bullet_id[1], bullet_id[2])))
 	{
 		return pool_sets[bullet_id[2]].pools[pool_index].bullet_kit;
 	}
@@ -458,7 +458,7 @@ void Bullets::set_bullet_property(Variant id, String property, Variant value)
 	int32_t pool_index = _get_pool_index(bullet_id[2], bullet_id[0]);
 	if (pool_index >= 0)
 	{
-		pool_sets[bullet_id[2]].pools[pool_index].pool->set_bullet_property(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]), property, value);
+		pool_sets[bullet_id[2]].pools[pool_index].pool->set_unit_property(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]), property, value);
 	}
 }
 
@@ -469,7 +469,7 @@ Variant Bullets::get_bullet_property(Variant id, String property)
 	int32_t pool_index = _get_pool_index(bullet_id[2], bullet_id[0]);
 	if (pool_index >= 0)
 	{
-		return pool_sets[bullet_id[2]].pools[pool_index].pool->get_bullet_property(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]), property);
+		return pool_sets[bullet_id[2]].pools[pool_index].pool->get_unit_property(BulletID(bullet_id[0], bullet_id[1], bullet_id[2]), property);
 	}
 	return Variant();
 }

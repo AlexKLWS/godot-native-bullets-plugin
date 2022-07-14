@@ -4,17 +4,17 @@
 #include <Viewport.hpp>
 #include <Font.hpp>
 
-#include "bullets_pool.h"
+#include "unit_pool.h"
 
 using namespace godot;
 
 //-- START Default "standard" implementations.
 
-template <class Kit, class BulletType>
-void AbstractBulletsPool<Kit, BulletType>::_init_bullet(BulletType *bullet) {}
+template <class Kit, class UnitType>
+void AbstractUnitPool<Kit, UnitType>::_init_unit(UnitType *bullet) {}
 
-template <class Kit, class BulletType>
-void AbstractBulletsPool<Kit, BulletType>::_enable_bullet(BulletType *bullet)
+template <class Kit, class UnitType>
+void AbstractUnitPool<Kit, UnitType>::_enable_unit(UnitType *bullet)
 {
 	bullet->lifetime = 0.0f;
 
@@ -26,14 +26,14 @@ void AbstractBulletsPool<Kit, BulletType>::_enable_bullet(BulletType *bullet)
 																															texture_rid);
 }
 
-template <class Kit, class BulletType>
-void AbstractBulletsPool<Kit, BulletType>::_disable_bullet(BulletType *bullet)
+template <class Kit, class UnitType>
+void AbstractUnitPool<Kit, UnitType>::_disable_unit(UnitType *bullet)
 {
 	VisualServer::get_singleton()->canvas_item_clear(bullet->item_rid);
 }
 
-template <class Kit, class BulletType>
-bool AbstractBulletsPool<Kit, BulletType>::_process_bullet(BulletType *bullet, float delta)
+template <class Kit, class UnitType>
+bool AbstractUnitPool<Kit, UnitType>::_process_unit(UnitType *bullet, float delta)
 {
 	bullet->transform.set_origin(bullet->transform.get_origin() + bullet->velocity * delta);
 
@@ -48,8 +48,8 @@ bool AbstractBulletsPool<Kit, BulletType>::_process_bullet(BulletType *bullet, f
 
 //-- END Default "standard" implementation.
 
-template <class Kit, class BulletType>
-AbstractBulletsPool<Kit, BulletType>::~AbstractBulletsPool()
+template <class Kit, class UnitType>
+AbstractUnitPool<Kit, UnitType>::~AbstractUnitPool()
 {
 	// Bullets node is responsible for clearing all the area and area shapes
 	for (int32_t i = 0; i < pool_size; i++)
@@ -63,9 +63,9 @@ AbstractBulletsPool<Kit, BulletType>::~AbstractBulletsPool()
 	delete[] shapes_to_indices;
 }
 
-template <class Kit, class BulletType>
-void AbstractBulletsPool<Kit, BulletType>::_init(CanvasItem *canvas_parent, RID shared_area, int32_t starting_shape_index,
-																								 int32_t set_index, Ref<BulletKit> kit, int32_t pool_size, int32_t z_index)
+template <class Kit, class UnitType>
+void AbstractUnitPool<Kit, UnitType>::_init(CanvasItem *canvas_parent, RID shared_area, int32_t starting_shape_index,
+																						int32_t set_index, Ref<UnitKit> kit, int32_t pool_size, int32_t z_index)
 {
 
 	// Check if collisions are enabled and if layer or mask are != 0,
@@ -79,10 +79,10 @@ void AbstractBulletsPool<Kit, BulletType>::_init(CanvasItem *canvas_parent, RID 
 	this->pool_size = pool_size;
 	this->set_index = set_index;
 
-	available_bullets = pool_size;
-	active_bullets = 0;
+	available_units = pool_size;
+	active_units = 0;
 
-	bullets = new BulletType *[pool_size];
+	bullets = new UnitType *[pool_size];
 	shapes_to_indices = new int32_t[pool_size];
 
 	canvas_item = VisualServer::get_singleton()->canvas_item_create();
@@ -91,7 +91,7 @@ void AbstractBulletsPool<Kit, BulletType>::_init(CanvasItem *canvas_parent, RID 
 
 	for (int32_t i = 0; i < pool_size; i++)
 	{
-		BulletType *bullet = BulletType::_new();
+		UnitType *bullet = UnitType::_new();
 		bullets[i] = bullet;
 
 		bullet->item_rid = VisualServer::get_singleton()->canvas_item_create();
@@ -127,12 +127,12 @@ void AbstractBulletsPool<Kit, BulletType>::_init(CanvasItem *canvas_parent, RID 
 		}
 		VisualServer::get_singleton()->canvas_item_set_modulate(bullet->item_rid, color);
 
-		_init_bullet(bullet);
+		_init_unit(bullet);
 	}
 }
 
-template <class Kit, class BulletType>
-int32_t AbstractBulletsPool<Kit, BulletType>::_process(float delta)
+template <class Kit, class UnitType>
+int32_t AbstractUnitPool<Kit, UnitType>::_process(float delta)
 {
 	if (kit->use_viewport_as_active_rect)
 	{
@@ -146,13 +146,13 @@ int32_t AbstractBulletsPool<Kit, BulletType>::_process(float delta)
 
 	if (collisions_enabled)
 	{
-		for (int32_t i = pool_size - 1; i >= available_bullets; i--)
+		for (int32_t i = pool_size - 1; i >= available_units; i--)
 		{
-			BulletType *bullet = bullets[i];
+			UnitType *bullet = bullets[i];
 
-			if (_process_bullet(bullet, delta))
+			if (_process_unit(bullet, delta))
 			{
-				_release_bullet(i);
+				_release_unit(i);
 				amount_variation -= 1;
 				i += 1;
 				continue;
@@ -164,13 +164,13 @@ int32_t AbstractBulletsPool<Kit, BulletType>::_process(float delta)
 	}
 	else
 	{
-		for (int32_t i = pool_size - 1; i >= available_bullets; i--)
+		for (int32_t i = pool_size - 1; i >= available_units; i--)
 		{
-			BulletType *bullet = bullets[i];
+			UnitType *bullet = bullets[i];
 
-			if (_process_bullet(bullet, delta))
+			if (_process_unit(bullet, delta))
 			{
-				_release_bullet(i);
+				_release_unit(i);
 				amount_variation -= 1;
 				i += 1;
 				continue;
@@ -182,15 +182,15 @@ int32_t AbstractBulletsPool<Kit, BulletType>::_process(float delta)
 	return amount_variation;
 }
 
-template <class Kit, class BulletType>
-void AbstractBulletsPool<Kit, BulletType>::spawn_bullet(Dictionary properties)
+template <class Kit, class UnitType>
+void AbstractUnitPool<Kit, UnitType>::spawn_unit(Dictionary properties)
 {
-	if (available_bullets > 0)
+	if (available_units > 0)
 	{
-		available_bullets -= 1;
-		active_bullets += 1;
+		available_units -= 1;
+		active_units += 1;
 
-		BulletType *bullet = bullets[available_bullets];
+		UnitType *bullet = bullets[available_units];
 
 		if (collisions_enabled)
 			Physics2DServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, false);
@@ -205,80 +205,80 @@ void AbstractBulletsPool<Kit, BulletType>::spawn_bullet(Dictionary properties)
 		if (collisions_enabled)
 			Physics2DServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
 
-		_enable_bullet(bullet);
+		_enable_unit(bullet);
 	}
 }
 
-template <class Kit, class BulletType>
-BulletID AbstractBulletsPool<Kit, BulletType>::obtain_bullet()
+template <class Kit, class UnitType>
+BulletID AbstractUnitPool<Kit, UnitType>::obtain_unit()
 {
-	if (available_bullets > 0)
+	if (available_units > 0)
 	{
-		available_bullets -= 1;
-		active_bullets += 1;
+		available_units -= 1;
+		active_units += 1;
 
-		BulletType *bullet = bullets[available_bullets];
+		UnitType *bullet = bullets[available_units];
 
 		if (collisions_enabled)
 			Physics2DServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, false);
 
-		_enable_bullet(bullet);
+		_enable_unit(bullet);
 
 		return BulletID(bullet->shape_index, bullet->cycle, set_index);
 	}
 	return BulletID(-1, -1, -1);
 }
 
-template <class Kit, class BulletType>
-bool AbstractBulletsPool<Kit, BulletType>::release_bullet(BulletID id)
+template <class Kit, class UnitType>
+bool AbstractUnitPool<Kit, UnitType>::release_unit(BulletID id)
 {
 	if (id.index >= starting_shape_index && id.index < starting_shape_index + pool_size && id.set == set_index)
 	{
 		int32_t bullet_index = shapes_to_indices[id.index - starting_shape_index];
-		if (bullet_index >= available_bullets && bullet_index < pool_size && id.cycle == bullets[bullet_index]->cycle)
+		if (bullet_index >= available_units && bullet_index < pool_size && id.cycle == bullets[bullet_index]->cycle)
 		{
-			_release_bullet(bullet_index);
+			_release_unit(bullet_index);
 			return true;
 		}
 	}
 	return false;
 }
 
-template <class Kit, class BulletType>
-bool AbstractBulletsPool<Kit, BulletType>::release_all_bullets()
+template <class Kit, class UnitType>
+bool AbstractUnitPool<Kit, UnitType>::release_all_units()
 {
-	for (int32_t i = pool_size - 1; i >= available_bullets; i--)
+	for (int32_t i = pool_size - 1; i >= available_units; i--)
 	{
-		_release_bullet(i);
+		_release_unit(i);
 	}
 	return true;
 }
 
-template <class Kit, class BulletType>
-void AbstractBulletsPool<Kit, BulletType>::_release_bullet(int32_t index)
+template <class Kit, class UnitType>
+void AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
 {
-	BulletType *bullet = bullets[index];
+	UnitType *bullet = bullets[index];
 
 	if (collisions_enabled)
 		Physics2DServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, true);
 
-	_disable_bullet(bullet);
+	_disable_unit(bullet);
 	bullet->cycle += 1;
 
-	_swap(shapes_to_indices[bullet->shape_index - starting_shape_index], shapes_to_indices[bullets[available_bullets]->shape_index - starting_shape_index]);
-	_swap(bullets[index], bullets[available_bullets]);
+	_swap(shapes_to_indices[bullet->shape_index - starting_shape_index], shapes_to_indices[bullets[available_units]->shape_index - starting_shape_index]);
+	_swap(bullets[index], bullets[available_units]);
 
-	available_bullets += 1;
-	active_bullets -= 1;
+	available_units += 1;
+	active_units -= 1;
 }
 
-template <class Kit, class BulletType>
-bool AbstractBulletsPool<Kit, BulletType>::is_bullet_valid(BulletID id)
+template <class Kit, class UnitType>
+bool AbstractUnitPool<Kit, UnitType>::is_unit_valid(BulletID id)
 {
 	if (id.index >= starting_shape_index && id.index < starting_shape_index + pool_size && id.set == set_index)
 	{
 		int32_t bullet_index = shapes_to_indices[id.index - starting_shape_index];
-		if (bullet_index >= available_bullets && bullet_index < pool_size && id.cycle == bullets[bullet_index]->cycle)
+		if (bullet_index >= available_units && bullet_index < pool_size && id.cycle == bullets[bullet_index]->cycle)
 		{
 			return true;
 		}
@@ -286,13 +286,13 @@ bool AbstractBulletsPool<Kit, BulletType>::is_bullet_valid(BulletID id)
 	return false;
 }
 
-template <class Kit, class BulletType>
-bool AbstractBulletsPool<Kit, BulletType>::is_bullet_existing(int32_t shape_index)
+template <class Kit, class UnitType>
+bool AbstractUnitPool<Kit, UnitType>::does_unit_exist(int32_t shape_index)
 {
 	if (shape_index >= starting_shape_index && shape_index < starting_shape_index + pool_size)
 	{
 		int32_t bullet_index = shapes_to_indices[shape_index - starting_shape_index];
-		if (bullet_index >= available_bullets)
+		if (bullet_index >= available_units)
 		{
 			return true;
 		}
@@ -300,13 +300,13 @@ bool AbstractBulletsPool<Kit, BulletType>::is_bullet_existing(int32_t shape_inde
 	return false;
 }
 
-template <class Kit, class BulletType>
-BulletID AbstractBulletsPool<Kit, BulletType>::get_bullet_from_shape(int32_t shape_index)
+template <class Kit, class UnitType>
+BulletID AbstractUnitPool<Kit, UnitType>::get_unit_from_shape(int32_t shape_index)
 {
 	if (shape_index >= starting_shape_index && shape_index < starting_shape_index + pool_size)
 	{
 		int32_t bullet_index = shapes_to_indices[shape_index - starting_shape_index];
-		if (bullet_index >= available_bullets)
+		if (bullet_index >= available_units)
 		{
 			return BulletID(shape_index, bullets[bullet_index]->cycle, set_index);
 		}
@@ -314,17 +314,17 @@ BulletID AbstractBulletsPool<Kit, BulletType>::get_bullet_from_shape(int32_t sha
 	return BulletID(-1, -1, -1);
 }
 
-template <class Kit, class BulletType>
-void AbstractBulletsPool<Kit, BulletType>::set_bullet_property(BulletID id, String property, Variant value)
+template <class Kit, class UnitType>
+void AbstractUnitPool<Kit, UnitType>::set_unit_property(BulletID id, String property, Variant value)
 {
-	if (is_bullet_valid(id))
+	if (is_unit_valid(id))
 	{
 		int32_t bullet_index = shapes_to_indices[id.index - starting_shape_index];
 		bullets[bullet_index]->set(property, value);
 
 		if (property == "transform")
 		{
-			BulletType *bullet = bullets[bullet_index];
+			UnitType *bullet = bullets[bullet_index];
 			VisualServer::get_singleton()->canvas_item_set_transform(bullet->item_rid, bullet->transform);
 			if (collisions_enabled)
 				Physics2DServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
@@ -332,10 +332,10 @@ void AbstractBulletsPool<Kit, BulletType>::set_bullet_property(BulletID id, Stri
 	}
 }
 
-template <class Kit, class BulletType>
-Variant AbstractBulletsPool<Kit, BulletType>::get_bullet_property(BulletID id, String property)
+template <class Kit, class UnitType>
+Variant AbstractUnitPool<Kit, UnitType>::get_unit_property(BulletID id, String property)
 {
-	if (is_bullet_valid(id))
+	if (is_unit_valid(id))
 	{
 		int32_t bullet_index = shapes_to_indices[id.index - starting_shape_index];
 

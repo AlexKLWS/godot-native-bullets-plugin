@@ -13,7 +13,7 @@
 #include <memory>
 
 #include "bullet_kit.h"
-#include "bullets_pool.h"
+#include "unit_pool.h"
 
 using namespace godot;
 
@@ -25,7 +25,7 @@ private:
 	// A pool internal representation with related properties.
 	struct PoolKit
 	{
-		std::unique_ptr<BulletsPool> pool;
+		std::unique_ptr<UnitPool> pool;
 		Ref<BulletKit> bullet_kit;
 		int32_t size;
 		int32_t z_index;

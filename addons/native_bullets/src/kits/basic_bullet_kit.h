@@ -27,12 +27,12 @@ public:
 };
 
 // Bullets pool definition.
-class BasicBulletsPool : public AbstractBulletsPool<BasicBulletKit, Unit>
+class BasicBulletsPool : public AbstractUnitPool<BasicBulletKit, Unit>
 {
 
 	// void _init_bullet(Bullet* bullet); Use default implementation.
 
-	void _enable_bullet(Unit *bullet)
+	void _enable_unit(Unit *bullet)
 	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
@@ -45,9 +45,9 @@ class BasicBulletsPool : public AbstractBulletsPool<BasicBulletKit, Unit>
 																																texture_rid);
 	}
 
-	// void _disable_bullet(Bullet* bullet); Use default implementation.
+	// void _disable_unit(Bullet* bullet); Use default implementation.
 
-	bool _process_bullet(Unit *bullet, float delta)
+	bool _process_unit(Unit *bullet, float delta)
 	{
 		bullet->transform.set_origin(bullet->transform.get_origin() + bullet->velocity * delta);
 
