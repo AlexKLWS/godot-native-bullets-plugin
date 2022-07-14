@@ -245,17 +245,22 @@ bool AbstractUnitPool<Kit, UnitType>::release_unit(BulletID id)
 }
 
 template <class Kit, class UnitType>
-bool AbstractUnitPool<Kit, UnitType>::release_all_units()
+PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units()
 {
-	for (int32_t i = pool_size - 1; i >= available_units; i--)
+	PoolVector2Array result = PoolVector2Array();
+	if (kit->is_clearable)
 	{
-		_release_unit(i);
+		for (int32_t i = pool_size - 1; i >= available_units; i--)
+		{
+			Vector2 released_unit_pos = _release_unit(i);
+			result.append(released_unit_pos);
+		}
 	}
-	return true;
+	return result;
 }
 
 template <class Kit, class UnitType>
-void AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
+Vector2 AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
 {
 	UnitType *bullet = bullets[index];
 
@@ -270,6 +275,8 @@ void AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
 
 	available_units += 1;
 	active_units -= 1;
+
+	return bullet->transform.get_origin();
 }
 
 template <class Kit, class UnitType>

@@ -35,6 +35,8 @@ public:
 	Rect2 active_rect;
 	// Additional data the user can set via the editor.
 	Variant data;
+	// Are units of this kit clearable in bulk
+	bool is_clearable = true;
 
 	void _init() {}
 

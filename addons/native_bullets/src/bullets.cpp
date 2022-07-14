@@ -22,7 +22,7 @@ void Bullets::_register_methods()
 	register_method("spawn_bullet", &Bullets::spawn_bullet);
 	register_method("obtain_bullet", &Bullets::obtain_bullet);
 	register_method("release_bullet", &Bullets::release_bullet);
-	register_method("release_all_bullets_for_kit", &Bullets::release_all_bullets_for_kit);
+	register_method("release_all_units", &Bullets::release_all_units);
 
 	register_method("is_bullet_valid", &Bullets::is_bullet_valid);
 	register_method("is_kit_valid", &Bullets::is_kit_valid);
@@ -309,29 +309,35 @@ bool Bullets::release_bullet(Variant id)
 	return result;
 }
 
-bool Bullets::release_all_bullets_for_kit(Ref<BulletKit> kit)
+PoolVector2Array Bullets::release_all_units()
 {
-	bool result = false;
-	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
+	PoolVector2Array result = PoolVector2Array();
+	Array keys = kits_to_set_pool_indices.keys();
+	for (int32_t i = 0; i < keys.size(); i++)
 	{
-		PoolIntArray set_pool_indices = kits_to_set_pool_indices[kit].operator PoolIntArray();
-		UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
-
-		if (pool->get_available_units() > 0)
+		if (available_bullets > 0)
 		{
-			int32_t pool_active_bullets = pool->get_active_units();
-			result = pool->release_all_units();
-			if (result)
+			PoolIntArray set_pool_indices = kits_to_set_pool_indices[keys[i]].operator PoolIntArray();
+			UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
+
+			if (pool->get_available_units() > 0)
 			{
-				available_bullets += pool_active_bullets;
-				active_bullets -= pool_active_bullets;
+				PoolVector2Array released_units_positions = pool->release_all_units();
+				int size = released_units_positions.size();
+				if (size > 0)
+				{
+					available_bullets += size;
+					active_bullets -= size;
+					result.append_array(released_units_positions);
+				}
 			}
 		}
 	}
+
 	return result;
 }
 
-bool release_all_bullets_for_kit_in_radius(Ref<BulletKit> kit, Vector2 from, float distance)
+bool release_all_units_in_radius(Vector2 from, float distance)
 {
 	return false;
 }

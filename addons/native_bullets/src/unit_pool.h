@@ -55,7 +55,7 @@ public:
 	virtual void spawn_unit(Dictionary properties) = 0;
 	virtual BulletID obtain_unit() = 0;
 	virtual bool release_unit(BulletID id) = 0;
-	virtual bool release_all_units() = 0;
+	virtual PoolVector2Array release_all_units() = 0;
 	virtual bool is_unit_valid(BulletID id) = 0;
 
 	virtual bool does_unit_exist(int32_t shape_index) = 0;
@@ -78,7 +78,7 @@ protected:
 	virtual inline void _disable_unit(UnitType *bullet);
 	virtual inline bool _process_unit(UnitType *bullet, float delta);
 
-	inline void _release_unit(int32_t index);
+	inline Vector2 _release_unit(int32_t index);
 
 public:
 	AbstractUnitPool() {}
@@ -92,7 +92,7 @@ public:
 	virtual void spawn_unit(Dictionary properties) override;
 	virtual BulletID obtain_unit() override;
 	virtual bool release_unit(BulletID id) override;
-	virtual bool release_all_units() override;
+	virtual PoolVector2Array release_all_units() override;
 	virtual bool is_unit_valid(BulletID id) override;
 
 	virtual bool does_unit_exist(int32_t shape_index) override;
