@@ -11,7 +11,7 @@
 
 #include <memory>
 
-#include "bullet.h"
+#include "unit.h"
 
 #define BULLET_KIT(BulletsPoolType)							\
 std::unique_ptr<BulletsPool> _create_pool() override;
