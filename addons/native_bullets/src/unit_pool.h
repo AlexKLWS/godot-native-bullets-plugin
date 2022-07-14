@@ -56,6 +56,7 @@ public:
 	virtual BulletID obtain_unit() = 0;
 	virtual bool release_unit(BulletID id) = 0;
 	virtual PoolVector2Array release_all_units() = 0;
+	virtual PoolVector2Array release_all_units_in_radius(Vector2 from, float distance_squared) = 0;
 	virtual bool is_unit_valid(BulletID id) = 0;
 
 	virtual bool does_unit_exist(int32_t shape_index) = 0;
@@ -93,6 +94,7 @@ public:
 	virtual BulletID obtain_unit() override;
 	virtual bool release_unit(BulletID id) override;
 	virtual PoolVector2Array release_all_units() override;
+	virtual PoolVector2Array release_all_units_in_radius(Vector2 from, float distance_squared) override;
 	virtual bool is_unit_valid(BulletID id) override;
 
 	virtual bool does_unit_exist(int32_t shape_index) override;

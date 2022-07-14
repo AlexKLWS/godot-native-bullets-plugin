@@ -23,6 +23,7 @@ void Bullets::_register_methods()
 	register_method("obtain_bullet", &Bullets::obtain_bullet);
 	register_method("release_bullet", &Bullets::release_bullet);
 	register_method("release_all_units", &Bullets::release_all_units);
+	register_method("release_all_units_in_radius", &Bullets::release_all_units_in_radius);
 
 	register_method("is_bullet_valid", &Bullets::is_bullet_valid);
 	register_method("is_kit_valid", &Bullets::is_kit_valid);
@@ -337,9 +338,33 @@ PoolVector2Array Bullets::release_all_units()
 	return result;
 }
 
-bool release_all_units_in_radius(Vector2 from, float distance)
+PoolVector2Array Bullets::release_all_units_in_radius(Vector2 from, float distance)
 {
-	return false;
+	PoolVector2Array result = PoolVector2Array();
+	Array keys = kits_to_set_pool_indices.keys();
+	float distance_squared = distance * distance;
+	for (int32_t i = 0; i < keys.size(); i++)
+	{
+		if (available_bullets > 0)
+		{
+			PoolIntArray set_pool_indices = kits_to_set_pool_indices[keys[i]].operator PoolIntArray();
+			UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
+
+			if (pool->get_available_units() > 0)
+			{
+				PoolVector2Array released_units_positions = pool->release_all_units_in_radius(from, distance_squared);
+				int size = released_units_positions.size();
+				if (size > 0)
+				{
+					available_bullets += size;
+					active_bullets -= size;
+					result.append_array(released_units_positions);
+				}
+			}
+		}
+	}
+
+	return result;
 }
 
 bool Bullets::is_bullet_valid(Variant id)

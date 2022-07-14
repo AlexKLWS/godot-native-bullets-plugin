@@ -72,7 +72,7 @@ public:
 	Variant obtain_bullet(Ref<BulletKit> kit);
 	bool release_bullet(Variant id);
 	PoolVector2Array release_all_units();
-	bool release_all_units_in_radius(Vector2 from, float distance);
+	PoolVector2Array release_all_units_in_radius(Vector2 from, float distance);
 
 	bool is_bullet_valid(Variant id);
 	bool is_kit_valid(Ref<BulletKit> kit);

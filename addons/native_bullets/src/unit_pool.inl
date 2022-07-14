@@ -260,9 +260,30 @@ PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units()
 }
 
 template <class Kit, class UnitType>
+PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units_in_radius(Vector2 from, float distance_squared)
+{
+	PoolVector2Array result = PoolVector2Array();
+	if (kit->is_clearable)
+	{
+		for (int32_t i = pool_size - 1; i >= available_units; i--)
+		{
+			UnitType *bullet = bullets[index];
+			Transform2D bullet_transform = bullet->transform;
+			if (bullet_transform.get_origin().distance_squared_to(from) < distance_squared)
+			{
+				Vector2 released_unit_pos = _release_unit(i);
+				result.append(released_unit_pos);
+			}
+		}
+	}
+	return result;
+}
+
+template <class Kit, class UnitType>
 Vector2 AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
 {
 	UnitType *bullet = bullets[index];
+	Transform2D bullet_transform = bullet->transform;
 
 	if (collisions_enabled)
 		Physics2DServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, true);
@@ -276,7 +297,7 @@ Vector2 AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
 	available_units += 1;
 	active_units -= 1;
 
-	return bullet->transform.get_origin();
+	return bullet_transform.get_origin();
 }
 
 template <class Kit, class UnitType>
