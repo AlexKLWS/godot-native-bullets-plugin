@@ -209,7 +209,7 @@ void Bullets::mount(Node2D *bullets_environment)
 			int32_t pool_size = pools_sizes[kit_index_in_node];
 
 			pool_sets[i].pools[j].pool = kit->_create_pool();
-			pool_sets[i].pools[j].bullet_kit = kit;
+			pool_sets[i].pools[j].unit_kit = kit;
 			pool_sets[i].pools[j].size = pool_size;
 			pool_sets[i].pools[j].z_index = z_indices[kit_index_in_node];
 
@@ -500,7 +500,7 @@ Ref<UnitKit> Bullets::get_kit_from_bullet(Variant id)
 	int32_t pool_index = _get_pool_index(bullet_id[2], bullet_id[0]);
 	if (pool_index >= 0 && pool_sets[bullet_id[2]].pools[pool_index].pool->is_unit_valid(BulletID(bullet_id[0], bullet_id[1], bullet_id[2])))
 	{
-		return pool_sets[bullet_id[2]].pools[pool_index].bullet_kit;
+		return pool_sets[bullet_id[2]].pools[pool_index].unit_kit;
 	}
 	return Ref<UnitKit>();
 }

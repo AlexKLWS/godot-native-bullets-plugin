@@ -86,7 +86,7 @@ Create a script.
 
 ```gdscript
 # Assign a valid UnitKit via the inspector.
-export(Resource) var bullet_kit
+export(Resource) var unit_kit
 
 
 func _process(delta):
@@ -110,7 +110,7 @@ func shoot():
 	}
 	# Spawn a bullet using the selected UnitKit and setting the properties defined above.
 	# Bullets is an autoload.
-	Bullets.spawn_bullet(bullet_kit, properties)
+	Bullets.spawn_bullet(unit_kit, properties)
 ```
 
 Here you go!
@@ -136,7 +136,7 @@ export(float) var bullets_speed = 50.0
 
 
 func shoot():
-	var bullet_kit = preload("res://path/to/following_bullet_kit.tres")
+	var unit_kit = preload("res://path/to/following_bullet_kit.tres")
 
 	# The bullet will be spawned in the same position as this node,
 	# travelling in the direction defined by its rotation.
@@ -151,7 +151,7 @@ func shoot():
 		"velocity": bullet_velocity
 	}
 	# Spawn a bullet using the selected UnitKit and setting the properties defined above.
-	Bullets.spawn_bullet(bullet_kit, properties)
+	Bullets.spawn_bullet(unit_kit, properties)
 ```
 
 ### Bullets handling
@@ -163,10 +163,10 @@ export(float) var bullets_speed = 50.0
 
 
 func shoot():
-	var bullet_kit = preload("res://path/to/basic_bullet_kit.tres")
+	var unit_kit = preload("res://path/to/basic_bullet_kit.tres")
 
 	# Use `obtain_bullet` to receive an opaque BulletID object.
-	var bullet_id = Bullets.obtain_bullet(bullet_kit)
+	var bullet_id = Bullets.obtain_bullet(unit_kit)
 
 	# You can then use `bullet_id' to set and get properties.
 	Bullets.set_bullet_property(bullet_id, "transform", Transform2D(global_rotation, global_position))
@@ -388,10 +388,10 @@ get_bullets_environment() -> BulletsEnvironment
 
 # Spawns a bullet using the passed UnitKit and setting the properties contained in the `properties` dictionary.
 # Returns whether a bullet has been spawned successfully.
-spawn_bullet(bullet_kit : UnitKit, properties : Dictionary) -> bool
+spawn_bullet(unit_kit : UnitKit, properties : Dictionary) -> bool
 
 # Spawns and returns an opaque ID of a bullet using the passed UnitKit.
-obtain_bullet(bullet_kit : UnitKit) -> BulletID
+obtain_bullet(unit_kit : UnitKit) -> BulletID
 
 # Attempts to delete the bullet referenced by the passed `bullet_id`. Returns whether the removal was successful.
 release_bullet(bullet_id : BulletID) -> bool
@@ -531,7 +531,7 @@ It sets bullets velocity, position and rotation.
 var enabled : bool
 
 # The UnitKit to use to spawn bullets.
-var bullet_kit : UnitKit
+var unit_kit : UnitKit
 
 # The spawned bullets speed.
 var bullets_speed : float

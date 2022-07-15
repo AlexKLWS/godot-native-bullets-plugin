@@ -26,7 +26,7 @@ private:
 	struct PoolKit
 	{
 		std::unique_ptr<UnitPool> pool;
-		Ref<UnitKit> bullet_kit;
+		Ref<UnitKit> unit_kit;
 		int32_t size;
 		int32_t z_index;
 	};

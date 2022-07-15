@@ -57,7 +57,7 @@ orientation_over_time = SubResource( 3 )
 [node name="BulletsSpawner" type="Node2D" parent="Center/Player/TimedRotator"]
 rotation = -1.5708
 script = ExtResource( 7 )
-bullet_kit = ExtResource( 4 )
+unit_kit = ExtResource( 4 )
 bullets_speed = 400.0
 bullets_spawn_distance = 20.0
 
@@ -133,7 +133,7 @@ bullet_kits = [ ExtResource( 4 ) ]
 pools_sizes = [ 3000 ]
 z_indices = [ 1 ]
 bullet_types_amount = 1
-bullet_type_0/bullet_kit = ExtResource( 4 )
+bullet_type_0/unit_kit = ExtResource( 4 )
 bullet_type_0/pool_size = 3000
 bullet_type_0/z_index = 1
 

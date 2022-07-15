@@ -60,7 +60,7 @@ func _get(property: String):
 		var strings = result.get_string().split("/")
 		var prop_index = strings[0].split("_")[2].to_int()
 		if bullet_kits.size() > prop_index and prop_index >= 0:
-			if strings[1] == "bullet_kit":
+			if strings[1] == "unit_kit":
 				return bullet_kits[prop_index]
 			elif strings[1] == "pool_size":
 				return pools_sizes[prop_index]
@@ -82,7 +82,7 @@ func _set(property: String, value):
 		var strings = result.get_string().split("/")
 		var prop_index = strings[0].split("_")[2].to_int()
 		if bullet_kits.size() > prop_index and prop_index >= 0:
-			if strings[1] == "bullet_kit":
+			if strings[1] == "unit_kit":
 				bullet_kits[prop_index] = value
 				return true
 			elif strings[1] == "pool_size":
@@ -109,7 +109,7 @@ func _get_property_list():
 		var format_array = [i]
 		
 		properties.append({
-			"name": "bullet_type_{0}/bullet_kit".format(format_array),
+			"name": "bullet_type_{0}/unit_kit".format(format_array),
 			"type": TYPE_OBJECT,
 			"usage": PROPERTY_USAGE_DEFAULT,
 			"hint": PROPERTY_HINT_RESOURCE_TYPE,
