@@ -20,6 +20,7 @@ void Bullets::_register_methods()
 	register_method("get_bullets_environment", &Bullets::get_bullets_environment);
 
 	register_method("spawn_bullet", &Bullets::spawn_bullet);
+	register_method("spawn_multiple_units", &Bullets::spawn_multiple_units);
 	register_method("obtain_bullet", &Bullets::obtain_bullet);
 	register_method("release_bullet", &Bullets::release_bullet);
 	register_method("release_all_units", &Bullets::release_all_units);
@@ -267,6 +268,28 @@ bool Bullets::spawn_bullet(Ref<BulletKit> kit, Dictionary properties)
 		}
 	}
 	return false;
+}
+
+int32_t Bullets::spawn_multiple_units(Ref<BulletKit> kit, Array set_of_dictionaries)
+{
+	int32_t successful_spawn_count = 0;
+	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
+	{
+		PoolIntArray set_pool_indices = kits_to_set_pool_indices[kit].operator PoolIntArray();
+		UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
+		for (int32_t i = 0; i < set_of_dictionaries.size(); i++)
+		{
+			if (pool->get_available_units() > 0)
+			{
+				available_bullets -= 1;
+				active_bullets += 1;
+
+				pool->spawn_unit(set_of_dictionaries[i]);
+				successful_spawn_count++;
+			}
+		}
+	}
+	return successful_spawn_count;
 }
 
 Variant Bullets::obtain_bullet(Ref<BulletKit> kit)

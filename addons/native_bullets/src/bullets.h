@@ -69,6 +69,7 @@ public:
 	Node *get_bullets_environment();
 
 	bool spawn_bullet(Ref<BulletKit> kit, Dictionary properties);
+	int32_t spawn_multiple_units(Ref<BulletKit> kit, Array set_of_dictionaries);
 	Variant obtain_bullet(Ref<BulletKit> kit);
 	bool release_bullet(Variant id);
 	PoolVector2Array release_all_units();
