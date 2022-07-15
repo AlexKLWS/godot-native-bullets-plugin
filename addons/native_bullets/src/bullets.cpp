@@ -128,7 +128,7 @@ void Bullets::mount(Node2D *bullets_environment)
 
 	VisualServer::get_singleton()->canvas_item_set_parent(this->get_canvas_item(), bullets_environment->get_canvas_item());
 
-	Array bullet_kits = bullets_environment->get("bullet_kits");
+	Array unit_kits = bullets_environment->get("unit_kits");
 	Array pools_sizes = bullets_environment->get("pools_sizes");
 	Array z_indices = bullets_environment->get("z_indices");
 
@@ -143,9 +143,9 @@ void Bullets::mount(Node2D *bullets_environment)
 
 	Dictionary collision_layers_masks_to_kits;
 
-	for (int32_t i = 0; i < bullet_kits.size(); i++)
+	for (int32_t i = 0; i < unit_kits.size(); i++)
 	{
-		Ref<UnitKit> kit = bullet_kits[i];
+		Ref<UnitKit> kit = unit_kits[i];
 		if (!kit->is_valid())
 		{
 			ERR_PRINT("UnitKit is not valid!");
@@ -205,7 +205,7 @@ void Bullets::mount(Node2D *bullets_environment)
 			set_pool_indices.set(1, j);
 			kits_to_set_pool_indices[kit] = set_pool_indices;
 
-			int32_t kit_index_in_node = bullet_kits.find(kit);
+			int32_t kit_index_in_node = unit_kits.find(kit);
 			int32_t pool_size = pools_sizes[kit_index_in_node];
 
 			pool_sets[i].pools[j].pool = kit->_create_pool();

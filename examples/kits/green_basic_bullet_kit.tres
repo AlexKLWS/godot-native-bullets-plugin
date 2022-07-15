@@ -20,5 +20,6 @@ use_viewport_as_active_rect = true
 active_rect = Rect2( 0, 0, 0, 0 )
 rotate = false
 unique_modulate_component = 0
+is_clearable = true
 data = {
 }

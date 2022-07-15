@@ -15,6 +15,9 @@ func _process(delta):
 		velocity.x -= 1
 	if(Input.is_action_pressed("ui_right")):
 		velocity.x += 1
+		
+	if(Input.is_action_just_pressed("ui_select")):
+		Bullets.release_all_units()
 	
 	if(velocity.length() > 0):
 		velocity = velocity.normalized() * speed

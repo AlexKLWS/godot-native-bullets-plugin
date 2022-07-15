@@ -14,11 +14,6 @@ _global_script_classes=[ {
 "language": "NativeScript",
 "path": "res://addons/native_bullets/kits/basic_bullet_kit.gdns"
 }, {
-"base": "Resource",
-"class": "UnitKit",
-"language": "NativeScript",
-"path": "res://addons/native_bullets/unit_kit.gdns"
-}, {
 "base": "Node2D",
 "class": "Bullets",
 "language": "NativeScript",
@@ -58,10 +53,14 @@ _global_script_classes=[ {
 "class": "TimedRotator",
 "language": "GDScript",
 "path": "res://addons/native_bullets/utils/timed_rotator.gd"
+}, {
+"base": "Resource",
+"class": "UnitKit",
+"language": "NativeScript",
+"path": "res://addons/native_bullets/unit_kit.gdns"
 } ]
 _global_script_class_icons={
 "BasicBulletKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg",
-"UnitKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg",
 "Bullets": "res://addons/native_bullets/icons/icon_bullets.svg",
 "BulletsEnvironment": "res://addons/native_bullets/icons/icon_bullets_environment.svg",
 "BulletsSpawner": "res://addons/native_bullets/icons/icon_bullet_properties.svg",
@@ -69,7 +68,8 @@ _global_script_class_icons={
 "FollowingBulletKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg",
 "FollowingDynamicBulletKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg",
 "TimedEvents": "res://addons/native_bullets/icons/icon_timed_events.svg",
-"TimedRotator": "res://addons/native_bullets/icons/icon_timed_rotator.svg"
+"TimedRotator": "res://addons/native_bullets/icons/icon_timed_rotator.svg",
+"UnitKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg"
 }
 
 [application]

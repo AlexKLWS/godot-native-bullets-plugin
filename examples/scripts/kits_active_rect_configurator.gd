@@ -23,6 +23,6 @@ func _set_bullets_active_rect_grow(value):
 	bullets_active_rect_grow = value
 	if environment:
 		# Set every kit active rect to the viewport visible rect grown by `bullets_active_rect_grow`.
-		for kit in environment.bullet_kits:
+		for kit in environment.unit_kits:
 			kit.use_viewport_as_active_rect = false
 			kit.active_rect = get_viewport().get_visible_rect().grow(bullets_active_rect_grow)

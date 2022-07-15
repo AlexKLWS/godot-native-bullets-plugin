@@ -129,7 +129,7 @@ bullets_active_rect_grow = 20.0
 
 [node name="BulletsEnvironment" type="Node2D" parent="."]
 script = ExtResource( 3 )
-bullet_kits = [ ExtResource( 4 ) ]
+unit_kits = [ ExtResource( 4 ) ]
 pools_sizes = [ 3000 ]
 z_indices = [ 1 ]
 bullet_types_amount = 1

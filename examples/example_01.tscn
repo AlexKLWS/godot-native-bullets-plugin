@@ -45,7 +45,7 @@ orientation_over_time = SubResource( 3 )
 [node name="BulletsSpawner" type="Node2D" parent="Enemy/Turrets/TimedRotatorLeft"]
 rotation = 1.5708
 script = ExtResource( 7 )
-unit_kit = ExtResource( 2 )
+bullet_kit = ExtResource( 2 )
 bullets_speed = 250.0
 bullets_spawn_distance = 24.0
 
@@ -66,7 +66,7 @@ orientation_over_time = SubResource( 3 )
 [node name="BulletsSpawner" type="Node2D" parent="Enemy/Turrets/TimedRotatorRight"]
 rotation = 1.5708
 script = ExtResource( 7 )
-unit_kit = ExtResource( 2 )
+bullet_kit = ExtResource( 2 )
 bullets_speed = 250.0
 bullets_spawn_distance = 24.0
 
@@ -105,7 +105,7 @@ __meta__ = {
 
 [node name="BulletsEnvironment" type="Node2D" parent="."]
 script = ExtResource( 3 )
-bullet_kits = [ ExtResource( 2 ) ]
+unit_kits = [ ExtResource( 2 ) ]
 pools_sizes = [ 3000 ]
 z_indices = [ 1 ]
 bullet_types_amount = 1

@@ -6,7 +6,7 @@ class_name BulletsEnvironment, "icons/icon_bullets_environment.svg"
 signal tree_entering(node)
 
 export(bool) var current = true setget _set_current
-export(Array, Resource) var bullet_kits: Array
+export(Array, Resource) var unit_kits: Array
 export(Array, int) var pools_sizes: Array
 export(Array, int) var z_indices: Array
 
@@ -53,15 +53,15 @@ func _set_current(value):
 
 func _get(property: String):
 	if property == "bullet_types_amount":
-		return bullet_kits.size()
+		return unit_kits.size()
 	
 	var result = properties_regex.search(property)
 	if result != null:
 		var strings = result.get_string().split("/")
 		var prop_index = strings[0].split("_")[2].to_int()
-		if bullet_kits.size() > prop_index and prop_index >= 0:
+		if unit_kits.size() > prop_index and prop_index >= 0:
 			if strings[1] == "unit_kit":
-				return bullet_kits[prop_index]
+				return unit_kits[prop_index]
 			elif strings[1] == "pool_size":
 				return pools_sizes[prop_index]
 			elif strings[1] == "z_index":
@@ -71,7 +71,7 @@ func _get(property: String):
 
 func _set(property: String, value):
 	if property == "bullet_types_amount":
-		bullet_kits.resize(value)
+		unit_kits.resize(value)
 		pools_sizes.resize(value)
 		z_indices.resize(value)
 		property_list_changed_notify()
@@ -81,9 +81,9 @@ func _set(property: String, value):
 	if result != null:
 		var strings = result.get_string().split("/")
 		var prop_index = strings[0].split("_")[2].to_int()
-		if bullet_kits.size() > prop_index and prop_index >= 0:
+		if unit_kits.size() > prop_index and prop_index >= 0:
 			if strings[1] == "unit_kit":
-				bullet_kits[prop_index] = value
+				unit_kits[prop_index] = value
 				return true
 			elif strings[1] == "pool_size":
 				pools_sizes[prop_index] = value
@@ -105,7 +105,7 @@ func _get_property_list():
 		"hint_string": "0,64"
 	})
 	
-	for i in range(bullet_kits.size()):
+	for i in range(unit_kits.size()):
 		var format_array = [i]
 		
 		properties.append({
