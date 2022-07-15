@@ -11,7 +11,7 @@ extents = Vector2( 14, 3.5 )
 [resource]
 script = ExtResource( 1 )
 texture = ExtResource( 3 )
-bullet_class_name = "Unit"
+unit_class_name = "Unit"
 material = ExtResource( 2 )
 collisions_enabled = true
 collision_layer = 1

@@ -4,16 +4,16 @@
 #include <Texture.hpp>
 #include <PackedScene.hpp>
 
-#include "../bullet_kit.h"
+#include "../unit_kit.h"
 
 using namespace godot;
 
 // Bullet kit definition.
-class BasicBulletKit : public BulletKit
+class BasicBulletKit : public UnitKit
 {
-	GODOT_CLASS(BasicBulletKit, BulletKit)
+	GODOT_CLASS(BasicBulletKit, UnitKit)
 public:
-	BULLET_KIT(BasicBulletsPool)
+	UNIT_KIT(BasicBulletsPool)
 
 	Ref<Texture> texture;
 
@@ -22,7 +22,7 @@ public:
 		register_property<BasicBulletKit, Ref<Texture>>("texture", &BasicBulletKit::texture, Ref<Texture>(),
 																										GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Texture");
 
-		BULLET_KIT_REGISTRATION(BasicBulletKit, Unit)
+		UNIT_KIT_REGISTRATION(BasicBulletKit, Unit)
 	}
 };
 
@@ -68,6 +68,6 @@ class BasicBulletsPool : public AbstractUnitPool<BasicBulletKit, Unit>
 	}
 };
 
-BULLET_KIT_IMPLEMENTATION(BasicBulletKit, BasicBulletsPool)
+UNIT_KIT_IMPLEMENTATION(BasicBulletKit, BasicBulletsPool)
 
 #endif

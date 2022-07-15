@@ -145,17 +145,17 @@ void Bullets::mount(Node2D *bullets_environment)
 
 	for (int32_t i = 0; i < bullet_kits.size(); i++)
 	{
-		Ref<BulletKit> kit = bullet_kits[i];
+		Ref<UnitKit> kit = bullet_kits[i];
 		if (!kit->is_valid())
 		{
-			ERR_PRINT("BulletKit is not valid!");
+			ERR_PRINT("UnitKit is not valid!");
 			continue;
 		}
-		// By default add the the BulletKit to a no-collisions list. (layer and mask = 0)
+		// By default add the the UnitKit to a no-collisions list. (layer and mask = 0)
 		int64_t layer_mask = 0;
 		if (kit->collisions_enabled && kit->collision_shape.is_valid())
 		{
-			// If collisions are enabled, add the BulletKit to another list.
+			// If collisions are enabled, add the UnitKit to another list.
 			layer_mask = (int64_t)kit->collision_layer + ((int64_t)kit->collision_mask << 32);
 		}
 		if (collision_layers_masks_to_kits.has(layer_mask))
@@ -176,7 +176,7 @@ void Bullets::mount(Node2D *bullets_environment)
 	for (int32_t i = 0; i < layer_mask_keys.size(); i++)
 	{
 		Array kits = collision_layers_masks_to_kits[layer_mask_keys[i]];
-		Ref<BulletKit> first_kit = kits[0];
+		Ref<UnitKit> first_kit = kits[0];
 
 		pool_sets[i].pools.resize(kits.size());
 
@@ -197,7 +197,7 @@ void Bullets::mount(Node2D *bullets_environment)
 
 		for (int32_t j = 0; j < kits.size(); j++)
 		{
-			Ref<BulletKit> kit = kits[j];
+			Ref<UnitKit> kit = kits[j];
 
 			PoolIntArray set_pool_indices = PoolIntArray();
 			set_pool_indices.resize(2);
@@ -251,7 +251,7 @@ Node *Bullets::get_bullets_environment()
 	return bullets_environment;
 }
 
-bool Bullets::spawn_bullet(Ref<BulletKit> kit, Dictionary properties)
+bool Bullets::spawn_bullet(Ref<UnitKit> kit, Dictionary properties)
 {
 	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
 	{
@@ -270,7 +270,7 @@ bool Bullets::spawn_bullet(Ref<BulletKit> kit, Dictionary properties)
 	return false;
 }
 
-int32_t Bullets::spawn_multiple_units(Ref<BulletKit> kit, Array set_of_dictionaries)
+int32_t Bullets::spawn_multiple_units(Ref<UnitKit> kit, Array set_of_dictionaries)
 {
 	int32_t successful_spawn_count = 0;
 	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
@@ -292,7 +292,7 @@ int32_t Bullets::spawn_multiple_units(Ref<BulletKit> kit, Array set_of_dictionar
 	return successful_spawn_count;
 }
 
-Variant Bullets::obtain_bullet(Ref<BulletKit> kit)
+Variant Bullets::obtain_bullet(Ref<UnitKit> kit)
 {
 	if (available_bullets > 0 && kits_to_set_pool_indices.has(kit))
 	{
@@ -402,12 +402,12 @@ bool Bullets::is_bullet_valid(Variant id)
 	return false;
 }
 
-bool Bullets::is_kit_valid(Ref<BulletKit> kit)
+bool Bullets::is_kit_valid(Ref<UnitKit> kit)
 {
 	return kits_to_set_pool_indices.has(kit);
 }
 
-int32_t Bullets::get_available_bullets(Ref<BulletKit> kit)
+int32_t Bullets::get_available_bullets(Ref<UnitKit> kit)
 {
 	if (kits_to_set_pool_indices.has(kit))
 	{
@@ -417,7 +417,7 @@ int32_t Bullets::get_available_bullets(Ref<BulletKit> kit)
 	return 0;
 }
 
-int32_t Bullets::get_active_bullets(Ref<BulletKit> kit)
+int32_t Bullets::get_active_bullets(Ref<UnitKit> kit)
 {
 	if (kits_to_set_pool_indices.has(kit))
 	{
@@ -427,7 +427,7 @@ int32_t Bullets::get_active_bullets(Ref<BulletKit> kit)
 	return 0;
 }
 
-int32_t Bullets::get_pool_size(Ref<BulletKit> kit)
+int32_t Bullets::get_pool_size(Ref<UnitKit> kit)
 {
 	if (kits_to_set_pool_indices.has(kit))
 	{
@@ -437,7 +437,7 @@ int32_t Bullets::get_pool_size(Ref<BulletKit> kit)
 	return 0;
 }
 
-int32_t Bullets::get_z_index(Ref<BulletKit> kit)
+int32_t Bullets::get_z_index(Ref<UnitKit> kit)
 {
 	if (kits_to_set_pool_indices.has(kit))
 	{
@@ -493,7 +493,7 @@ Variant Bullets::get_bullet_from_shape(RID area_rid, int32_t shape_index)
 	return invalid_id;
 }
 
-Ref<BulletKit> Bullets::get_kit_from_bullet(Variant id)
+Ref<UnitKit> Bullets::get_kit_from_bullet(Variant id)
 {
 	PoolIntArray bullet_id = id.operator PoolIntArray();
 
@@ -502,7 +502,7 @@ Ref<BulletKit> Bullets::get_kit_from_bullet(Variant id)
 	{
 		return pool_sets[bullet_id[2]].pools[pool_index].bullet_kit;
 	}
-	return Ref<BulletKit>();
+	return Ref<UnitKit>();
 }
 
 void Bullets::set_bullet_property(Variant id, String property, Variant value)

@@ -36,9 +36,9 @@ Pre-built binaries are provided for:
 
 For best performance, toggle `use_bvh` off in Project Settings -> Physics -> 2d.
 
-### BulletKit creation
+### UnitKit creation
 
-The first thing to do is create a BulletKit resource and choose how bullets will appear and behave tweaking its properties.
+The first thing to do is create a UnitKit resource and choose how bullets will appear and behave tweaking its properties.
 
 1. Create a new empty resource and assign one of the scripts you can find in the `addons/native_bullets/kits` folder to it.
    In this example, we'll assign the `basic_bullet_kit.gdns` script.
@@ -54,7 +54,7 @@ The first thing to do is create a BulletKit resource and choose how bullets will
   <img src="https://user-images.githubusercontent.com/19392104/140386739-dc06ddbe-1943-45b0-a4c7-ac5e6a494783.png" />
 </p>
 
-This BulletKit resource is now ready to be used!
+This UnitKit resource is now ready to be used!
 
 ### BulletsEnvironment node
 
@@ -68,7 +68,7 @@ The BulletsEnvironment node has to be configured to choose which kinds of bullet
 2. Choose how many types of bullets this node will be able to spawn. Increase `bullet_types_amount` to 1 for now.
 
 3. A new section of the inspector will appear below. Unfold the `Bullet Type 0` entry.
-   Here, drag & drop the BulletKit resource you created earlier to let the node know that you'll want to spawn the bullet described in it!
+   Here, drag & drop the UnitKit resource you created earlier to let the node know that you'll want to spawn the bullet described in it!
 4. Choose the maximum amount of bullets setting the `pool_size` property and the their `z_index`.
    3000 and 1 will be ok.
 
@@ -85,7 +85,7 @@ You can use the utilities provided by the plugin to spawn bullets in a variety o
 Create a script.
 
 ```gdscript
-# Assign a valid BulletKit via the inspector.
+# Assign a valid UnitKit via the inspector.
 export(Resource) var bullet_kit
 
 
@@ -108,7 +108,7 @@ func shoot():
 		"transform": Transform2D(global_rotation, global_position),
 		"velocity": bullet_velocity
 	}
-	# Spawn a bullet using the selected BulletKit and setting the properties defined above.
+	# Spawn a bullet using the selected UnitKit and setting the properties defined above.
 	# Bullets is an autoload.
 	Bullets.spawn_bullet(bullet_kit, properties)
 ```
@@ -150,7 +150,7 @@ func shoot():
 		"transform": Transform2D(global_rotation, global_position),
 		"velocity": bullet_velocity
 	}
-	# Spawn a bullet using the selected BulletKit and setting the properties defined above.
+	# Spawn a bullet using the selected UnitKit and setting the properties defined above.
 	Bullets.spawn_bullet(bullet_kit, properties)
 ```
 
@@ -191,7 +191,7 @@ func _on_area_shape_entered(area_id, _area, area_shape, _local_shape):
 	# If you previously set a custom Dictionary containing the `damage` key as the data property, you can retrieve it.
 	var bullet_damage = Bullet.get_bullet_property(bullet_id, "data").damage
 
-	# You can also retrieve the BulletKit that generated the bullet and get/set its properties.
+	# You can also retrieve the UnitKit that generated the bullet and get/set its properties.
 	var kit_collision_shape = Bullets.get_kit_from_bullet(bullet_id).collision_shape
 
 	# Remove the bullet, call_deferred is necessary because the Physics2DServer is in its flushing state during callbacks.
@@ -202,17 +202,17 @@ func _on_area_shape_entered(area_id, _area, area_shape, _local_shape):
 
 The plugin has a few main components, explained below:
 
-### @ BulletKit
+### @ UnitKit
 
 This is the resource used to configure each type of bullet.<br>
-Every BulletKit spawns its own bullet instances that support different kinds of properties.<br>
+Every UnitKit spawns its own bullet instances that support different kinds of properties.<br>
 
 The plugin comes with 4 base variants that can be customized via the editor:
 
 <details>
 <summary>BasicBulletKit</summary>
 <br>
-This is the most basic BulletKit, makes bullets move, generally at constant speed.<br>
+This is the most basic UnitKit, makes bullets move, generally at constant speed.<br>
 It's configurable with:
 
 - `texture`: controls what texture is sent to the bullet material.
@@ -225,7 +225,7 @@ It's configurable with:
 - `active_rect`: the rect outside of which the bullets get deleted. Visible only if `use_viewport_as_active_rect` if off.
 - `rotate`: controls whether the bullets automatically rotate based on their direction of travel.
 - `unique_modulate_component`: controls which modulate component in the material will be used as a unique value for each bullet instance. This can be used to offset bullets animation frames by unique amounts inside shaders and it's needed due to Godot not supporting material instance properties in 3.x.
-- `data`: custom data you can assign to the BulletKit.
+- `data`: custom data you can assign to the UnitKit.
 
 Bullets spawned by a BasicBulletKit have those properties:
 
@@ -241,7 +241,7 @@ Bullets spawned by a BasicBulletKit have those properties:
 <details>
 <summary>FollowingBulletKit</summary>
 <br>
-This BulletKit lets you define a target node for each bullet and a turning speed used to chase a it around.<br>
+This UnitKit lets you define a target node for each bullet and a turning speed used to chase a it around.<br>
 It's configurable with:
 
 - `texture`: controls what texture is sent to the bullet material.
@@ -255,7 +255,7 @@ It's configurable with:
 - `active_rect`: the rect outside of which the bullets get deleted. Visible only if `use_viewport_as_active_rect` if off.
 - `rotate`: controls whether the bullets automatically rotate based on their direction of travel.
 - `unique_modulate_component`: controls which modulate component in the material will be used as a unique value for each bullet instance. This can be used to offset bullets animation frames by unique amounts inside shaders and it's needed due to Godot not supporting material instance properties in 3.x.
-- `data`: custom data you can assign to the BulletKit.
+- `data`: custom data you can assign to the UnitKit.
 
 Bullets spawned by a FollowingBulletKit have those properties:
 
@@ -289,7 +289,7 @@ It's configurable with:
 - `active_rect`: the rect outside of which the bullets get deleted. Visible only if `use_viewport_as_active_rect` if off.
 - `rotate`: controls whether the bullets automatically rotate based on their direction of travel.
 - `unique_modulate_component`: controls which modulate component in the material will be used as a unique value for each bullet instance. This can be used to offset bullets animation frames by unique amounts inside shaders and it's needed due to Godot not supporting material instance properties in 3.x.
-- `data`: custom data you can assign to the BulletKit.
+- `data`: custom data you can assign to the UnitKit.
 
 Bullets spawned by a DynamicBulletKit have those properties:
 
@@ -333,7 +333,7 @@ It's configurable with:
 - `active_rect`: the rect outside of which the bullets get deleted. Visible only if `use_viewport_as_active_rect` if off.
 - `rotate`: controls whether the bullets automatically rotate based on their direction of travel.
 - `unique_modulate_component`: controls which modulate component in the material will be used as a unique value for each bullet instance. This can be used to offset bullets animation frames by unique amounts inside shaders and it's needed due to Godot not supporting material instance properties in 3.x.
-- `data`: custom data you can assign to the BulletKit.
+- `data`: custom data you can assign to the UnitKit.
 
 Bullets spawned by a FollowingDynamicBulletKit have those properties:
 
@@ -386,12 +386,12 @@ unmount(bullets_environment : BulletsEnvironment) -> void
 # Returns the currently active BulletsEnvironment node.
 get_bullets_environment() -> BulletsEnvironment
 
-# Spawns a bullet using the passed BulletKit and setting the properties contained in the `properties` dictionary.
+# Spawns a bullet using the passed UnitKit and setting the properties contained in the `properties` dictionary.
 # Returns whether a bullet has been spawned successfully.
-spawn_bullet(bullet_kit : BulletKit, properties : Dictionary) -> bool
+spawn_bullet(bullet_kit : UnitKit, properties : Dictionary) -> bool
 
-# Spawns and returns an opaque ID of a bullet using the passed BulletKit.
-obtain_bullet(bullet_kit : BulletKit) -> BulletID
+# Spawns and returns an opaque ID of a bullet using the passed UnitKit.
+obtain_bullet(bullet_kit : UnitKit) -> BulletID
 
 # Attempts to delete the bullet referenced by the passed `bullet_id`. Returns whether the removal was successful.
 release_bullet(bullet_id : BulletID) -> bool
@@ -400,19 +400,19 @@ release_bullet(bullet_id : BulletID) -> bool
 is_bullet_valid(bullet_id : BulletID) -> bool
 
 # Returns whether `kit` has been configured and is ready to be used in this Bullets instance.
-is_kit_valid(kit : BulletKit) -> bool
+is_kit_valid(kit : UnitKit) -> bool
 
-# Returns the number of currently available bullets for the `kit` BulletKit.
-get_available_bullets(kit : BulletKit) -> int
+# Returns the number of currently available bullets for the `kit` UnitKit.
+get_available_bullets(kit : UnitKit) -> int
 
-# Returns the number of currently active bullets for the `kit` BulletKit.
-get_active_bullets(kit : BulletKit) -> int
+# Returns the number of currently active bullets for the `kit` UnitKit.
+get_active_bullets(kit : UnitKit) -> int
 
-# Returns the number of pooled bullets for the `kit` BulletKit.
-get_pool_size(kit : BulletKit) -> int
+# Returns the number of pooled bullets for the `kit` UnitKit.
+get_pool_size(kit : UnitKit) -> int
 
-# Returns the z index of the bulltes generated by the `kit` BulletKit.
-get_z_index(kit : BulletKit) -> int
+# Returns the z index of the bulltes generated by the `kit` UnitKit.
+get_z_index(kit : UnitKit) -> int
 
 # Returns the total number of currently available bullets.
 get_total_available_bullets() -> int
@@ -426,8 +426,8 @@ is_bullet_existing(area_rid : RID, area_shape : int) -> BulletID
 # Returns the opaque ID of a bullet based on its area RID and its shape index.
 get_bullet_from_shape(area_rid : RID, area_shape : int) -> BulletID
 
-# Returns the BulletKit that defined the bullet referenced by the passed `bullet_id`.
-get_kit_from_bullet(bullet_id : BulletID) -> BulletKit
+# Returns the UnitKit that defined the bullet referenced by the passed `bullet_id`.
+get_kit_from_bullet(bullet_id : BulletID) -> UnitKit
 
 # Sets the indicated property of the bullet referenced by `bullet_id`.
 set_bullet_property(bullet_id : BulletID, property : String, value : Variant) -> void
@@ -530,8 +530,8 @@ It sets bullets velocity, position and rotation.
 # Enables or disables shooting.
 var enabled : bool
 
-# The BulletKit to use to spawn bullets.
-var bullet_kit : BulletKit
+# The UnitKit to use to spawn bullets.
+var bullet_kit : UnitKit
 
 # The spawned bullets speed.
 var bullets_speed : float
@@ -577,13 +577,13 @@ Here's an example.
 #include <SceneTree.hpp>
 #include <cmath>
 
-#include "../bullet_kit.h"
+#include "../unit_kit.h"
 
 using namespace godot;
 
 
 // Bullet definition.
-// This is necessary only if your BulletKit needs custom efficiently accessible bullet properties.
+// This is necessary only if your UnitKit needs custom efficiently accessible bullet properties.
 class CustomFollowingBullet : public Bullet {
 	// Godot requires you to add this macro to make this class work properly.
 	GODOT_CLASS(CustomFollowingBullet, Bullet)
@@ -604,7 +604,7 @@ public:
 
 	static void _register_methods() {
 		// Registering an Object reference property with GODOT_PROPERTY_HINT_RESOURCE_TYPE and hint_string is just
-		// a way to tell the editor plugin the type of the property, so that it can be viewed in the BulletKit inspector.
+		// a way to tell the editor plugin the type of the property, so that it can be viewed in the UnitKit inspector.
 		register_property<CustomFollowingBullet, Node2D*>("target_node",
 			&CustomFollowingBullet::set_target_node,
 			&CustomFollowingBullet::get_target_node, nullptr,
@@ -614,13 +614,13 @@ public:
 
 // Bullet kit definition.
 // Add your own properties, methods and exports.
-class CustomFollowingBulletKit : public BulletKit {
+class CustomFollowingBulletKit : public UnitKit {
 	// Godot requires you to add this macro to make this class work properly.
-	GODOT_CLASS(CustomFollowingBulletKit, BulletKit)
+	GODOT_CLASS(CustomFollowingBulletKit, UnitKit)
 public:
 	// Use this macro to configure this bullet kit.
-	// Pass the BulletsPool type that will be used as the argument.
-	BULLET_KIT(CustomFollowingBulletsPool)
+	// Pass the UnitPool type that will be used as the argument.
+	UNIT_KIT(CustomFollowingBulletsPool)
 
 	Ref<Texture> texture;
 	float bullets_turning_speed = 1.0f;
@@ -632,13 +632,13 @@ public:
 			GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.0,128.0");
 
 		// Add this macro at the end of the _register_methods() method.
-		// Pass this BulletKit type and the used Bullet type as arguments.
-		BULLET_KIT_REGISTRATION(CustomFollowingBulletKit, CustomFollowingBullet)
+		// Pass this UnitKit type and the used Bullet type as arguments.
+		UNIT_KIT_REGISTRATION(CustomFollowingBulletKit, CustomFollowingBullet)
 	}
 };
 
 // Bullets pool definition.
-// This is the class that will handle the logic linked to your custom BulletKit.
+// This is the class that will handle the logic linked to your custom UnitKit.
 // It must extend AbstractBulletsPool.
 class CustomFollowingBulletsPool : public AbstractBulletsPool<CustomFollowingBulletKit, CustomFollowingBullet> {
 
@@ -694,8 +694,8 @@ class CustomFollowingBulletsPool : public AbstractBulletsPool<CustomFollowingBul
 };
 
 // Add this macro at the end of the file to automatically implement a few needed utilities.
-// Pass the BulletKit type and the BulletsPool type as arguments.
-BULLET_KIT_IMPLEMENTATION(CustomFollowingBulletKit, CustomFollowingBulletsPool)
+// Pass the UnitKit type and the UnitPool type as arguments.
+UNIT_KIT_IMPLEMENTATION(CustomFollowingBulletKit, CustomFollowingBulletsPool)
 
 #endif
 ```
@@ -735,4 +735,4 @@ scons platform=windows target=release
 ```
 
 Finally, create a NativeScript resource setting `bullets.gdnlib` as its library and `CustomFollowingBulletKit` as its class name.<br>
-Now you can attach this script to your BulletKit resources and use it.
+Now you can attach this script to your UnitKit resources and use it.

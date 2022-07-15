@@ -15,7 +15,7 @@ _global_script_classes=[ {
 "path": "res://addons/native_bullets/kits/basic_bullet_kit.gdns"
 }, {
 "base": "Resource",
-"class": "BulletKit",
+"class": "UnitKit",
 "language": "NativeScript",
 "path": "res://addons/native_bullets/bullet_kit.gdns"
 }, {
@@ -61,7 +61,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "BasicBulletKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg",
-"BulletKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg",
+"UnitKit": "res://addons/native_bullets/icons/icon_bullet_kit.svg",
 "Bullets": "res://addons/native_bullets/icons/icon_bullets.svg",
 "BulletsEnvironment": "res://addons/native_bullets/icons/icon_bullets_environment.svg",
 "BulletsSpawner": "res://addons/native_bullets/icons/icon_bullet_properties.svg",

@@ -12,7 +12,7 @@
 #include <vector>
 #include <memory>
 
-#include "bullet_kit.h"
+#include "unit_kit.h"
 #include "unit_pool.h"
 
 using namespace godot;
@@ -26,7 +26,7 @@ private:
 	struct PoolKit
 	{
 		std::unique_ptr<UnitPool> pool;
-		Ref<BulletKit> bullet_kit;
+		Ref<UnitKit> bullet_kit;
 		int32_t size;
 		int32_t z_index;
 	};
@@ -39,7 +39,7 @@ private:
 	std::vector<PoolKitSet> pool_sets;
 	// Maps each area RID to the corresponding PoolKitSet index.
 	Dictionary areas_to_pool_set_indices;
-	// Maps each BulletKit to the corresponding PoolKit index.
+	// Maps each UnitKit to the corresponding PoolKit index.
 	Dictionary kits_to_set_pool_indices;
 
 	Node *bullets_environment = nullptr;
@@ -68,27 +68,27 @@ public:
 	void unmount(Node *bullets_environment);
 	Node *get_bullets_environment();
 
-	bool spawn_bullet(Ref<BulletKit> kit, Dictionary properties);
-	int32_t spawn_multiple_units(Ref<BulletKit> kit, Array set_of_dictionaries);
-	Variant obtain_bullet(Ref<BulletKit> kit);
+	bool spawn_bullet(Ref<UnitKit> kit, Dictionary properties);
+	int32_t spawn_multiple_units(Ref<UnitKit> kit, Array set_of_dictionaries);
+	Variant obtain_bullet(Ref<UnitKit> kit);
 	bool release_bullet(Variant id);
 	PoolVector2Array release_all_units();
 	PoolVector2Array release_all_units_in_radius(Vector2 from, float distance);
 
 	bool is_bullet_valid(Variant id);
-	bool is_kit_valid(Ref<BulletKit> kit);
+	bool is_kit_valid(Ref<UnitKit> kit);
 
-	int32_t get_available_bullets(Ref<BulletKit> kit);
-	int32_t get_active_bullets(Ref<BulletKit> kit);
-	int32_t get_pool_size(Ref<BulletKit> kit);
-	int32_t get_z_index(Ref<BulletKit> kit);
+	int32_t get_available_bullets(Ref<UnitKit> kit);
+	int32_t get_active_bullets(Ref<UnitKit> kit);
+	int32_t get_pool_size(Ref<UnitKit> kit);
+	int32_t get_z_index(Ref<UnitKit> kit);
 
 	int32_t get_total_available_bullets();
 	int32_t get_total_active_bullets();
 
 	bool is_bullet_existing(RID area_rid, int32_t shape_index);
 	Variant get_bullet_from_shape(RID area_rid, int32_t shape_index);
-	Ref<BulletKit> get_kit_from_bullet(Variant id);
+	Ref<UnitKit> get_kit_from_bullet(Variant id);
 
 	void set_bullet_property(Variant id, String property, Variant value);
 	Variant get_bullet_property(Variant id, String property);

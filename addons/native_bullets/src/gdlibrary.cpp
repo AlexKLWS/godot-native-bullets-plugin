@@ -19,7 +19,7 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle)
 	godot::Godot::nativescript_init(handle);
 
 	godot::register_class<Unit>();
-	godot::register_class<BulletKit>();
+	godot::register_class<UnitKit>();
 	godot::register_class<Bullets>();
 
 	// Default Bullet Kits.

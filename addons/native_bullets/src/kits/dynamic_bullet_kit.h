@@ -5,7 +5,7 @@
 #include <PackedScene.hpp>
 #include <Curve.hpp>
 
-#include "../bullet_kit.h"
+#include "../unit_kit.h"
 
 using namespace godot;
 
@@ -57,11 +57,11 @@ public:
 };
 
 // Bullet kit definition.
-class DynamicBulletKit : public BulletKit
+class DynamicBulletKit : public UnitKit
 {
-	GODOT_CLASS(DynamicBulletKit, BulletKit)
+	GODOT_CLASS(DynamicBulletKit, UnitKit)
 public:
-	BULLET_KIT(DynamicBulletsPool)
+	UNIT_KIT(DynamicBulletsPool)
 
 	Ref<Texture> texture;
 	float lifetime_curves_span = 1.0f;
@@ -82,7 +82,7 @@ public:
 		register_property<DynamicBulletKit, Ref<Curve>>("rotation_offset_over_lifetime", &DynamicBulletKit::rotation_offset_over_lifetime, Ref<Curve>(),
 																										GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Curve");
 
-		BULLET_KIT_REGISTRATION(DynamicBulletKit, DynamicBullet)
+		UNIT_KIT_REGISTRATION(DynamicBulletKit, DynamicBullet)
 	}
 };
 
@@ -147,6 +147,6 @@ class DynamicBulletsPool : public AbstractUnitPool<DynamicBulletKit, DynamicBull
 	}
 };
 
-BULLET_KIT_IMPLEMENTATION(DynamicBulletKit, DynamicBulletsPool)
+UNIT_KIT_IMPLEMENTATION(DynamicBulletKit, DynamicBulletsPool)
 
 #endif

@@ -7,7 +7,7 @@
 #include <SceneTree.hpp>
 #include <cmath>
 
-#include "../bullet_kit.h"
+#include "../unit_kit.h"
 
 using namespace godot;
 
@@ -33,7 +33,7 @@ public:
 	static void _register_methods()
 	{
 		// Registering an Object reference property with GODOT_PROPERTY_HINT_RESOURCE_TYPE and hint_string is just
-		// a way to tell the editor plugin the type of the property, so that it can be viewed in the BulletKit inspector.
+		// a way to tell the editor plugin the type of the property, so that it can be viewed in the UnitKit inspector.
 		register_property<FollowingBullet, Node2D *>("target_node",
 																								 &FollowingBullet::set_target_node,
 																								 &FollowingBullet::get_target_node, nullptr,
@@ -42,11 +42,11 @@ public:
 };
 
 // Bullet kit definition.
-class FollowingBulletKit : public BulletKit
+class FollowingBulletKit : public UnitKit
 {
-	GODOT_CLASS(FollowingBulletKit, BulletKit)
+	GODOT_CLASS(FollowingBulletKit, UnitKit)
 public:
-	BULLET_KIT(FollowingBulletsPool)
+	UNIT_KIT(FollowingBulletsPool)
 
 	Ref<Texture> texture;
 	float bullets_turning_speed = 1.0f;
@@ -58,7 +58,7 @@ public:
 		register_property<FollowingBulletKit, float>("bullets_turning_speed", &FollowingBulletKit::bullets_turning_speed, 1.0f,
 																								 GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.0,128.0");
 
-		BULLET_KIT_REGISTRATION(FollowingBulletKit, FollowingBullet)
+		UNIT_KIT_REGISTRATION(FollowingBulletKit, FollowingBullet)
 	}
 };
 
@@ -115,6 +115,6 @@ class FollowingBulletsPool : public AbstractUnitPool<FollowingBulletKit, Followi
 	}
 };
 
-BULLET_KIT_IMPLEMENTATION(FollowingBulletKit, FollowingBulletsPool)
+UNIT_KIT_IMPLEMENTATION(FollowingBulletKit, FollowingBulletsPool)
 
 #endif
