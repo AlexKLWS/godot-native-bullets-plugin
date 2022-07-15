@@ -55,6 +55,8 @@ public:
 	int32_t unique_modulate_component = 0;
 	// Additional data the user can set via the editor.
 	Variant data;
+	// Controls whether the units of this kit are clearable in bulk
+	bool is_clearable = true;
 
 	void _init() {}
 

@@ -267,7 +267,7 @@ PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units_in_radius(Ve
 	{
 		for (int32_t i = pool_size - 1; i >= available_units; i--)
 		{
-			UnitType *bullet = bullets[index];
+			UnitType *bullet = bullets[i];
 			Transform2D bullet_transform = bullet->transform;
 			if (bullet_transform.get_origin().distance_squared_to(from) < distance_squared)
 			{
