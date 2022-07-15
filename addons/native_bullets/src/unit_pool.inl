@@ -254,6 +254,7 @@ PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units()
 		{
 			Vector2 released_unit_pos = _release_unit(i);
 			result.append(released_unit_pos);
+			i += 1;
 		}
 	}
 	return result;
@@ -273,6 +274,7 @@ PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units_in_radius(Ve
 			{
 				Vector2 released_unit_pos = _release_unit(i);
 				result.append(released_unit_pos);
+				i += 1;
 			}
 		}
 	}

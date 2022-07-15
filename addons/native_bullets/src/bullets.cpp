@@ -336,57 +336,55 @@ bool Bullets::release_bullet(Variant id)
 PoolVector2Array Bullets::release_all_units()
 {
 	PoolVector2Array result = PoolVector2Array();
-	Array keys = kits_to_set_pool_indices.keys();
-	for (int32_t i = 0; i < keys.size(); i++)
+	if (available_bullets > 0)
 	{
-		if (available_bullets > 0)
+		for (int32_t x = 0; x < pool_sets.size(); ++x)
 		{
-			PoolIntArray set_pool_indices = kits_to_set_pool_indices[keys[i]].operator PoolIntArray();
-			UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
-
-			if (pool->get_available_units() > 0)
+			for (int32_t y = 0; y < pool_sets[x].pools.size(); ++y)
 			{
-				PoolVector2Array released_units_positions = pool->release_all_units();
-				int size = released_units_positions.size();
-				if (size > 0)
+				UnitPool *pool = pool_sets[x].pools[y].pool.get();
+				if (pool->get_available_units() > 0)
 				{
-					available_bullets += size;
-					active_bullets -= size;
-					result.append_array(released_units_positions);
+					PoolVector2Array released_units_positions = pool->release_all_units();
+					int size = released_units_positions.size();
+					if (size > 0)
+					{
+						available_bullets += size;
+						active_bullets -= size;
+						result.append_array(released_units_positions);
+					}
 				}
 			}
 		}
 	}
-
 	return result;
 }
 
 PoolVector2Array Bullets::release_all_units_in_radius(Vector2 from, float distance)
 {
 	PoolVector2Array result = PoolVector2Array();
-	Array keys = kits_to_set_pool_indices.keys();
-	float distance_squared = distance * distance;
-	for (int32_t i = 0; i < keys.size(); i++)
+	if (available_bullets > 0)
 	{
-		if (available_bullets > 0)
+		float distance_squared = distance * distance;
+		for (int32_t x = 0; x < pool_sets.size(); ++x)
 		{
-			PoolIntArray set_pool_indices = kits_to_set_pool_indices[keys[i]].operator PoolIntArray();
-			UnitPool *pool = pool_sets[set_pool_indices[0]].pools[set_pool_indices[1]].pool.get();
-
-			if (pool->get_available_units() > 0)
+			for (int32_t y = 0; y < pool_sets[x].pools.size(); ++y)
 			{
-				PoolVector2Array released_units_positions = pool->release_all_units_in_radius(from, distance_squared);
-				int size = released_units_positions.size();
-				if (size > 0)
+				UnitPool *pool = pool_sets[x].pools[y].pool.get();
+				if (pool->get_available_units() > 0)
 				{
-					available_bullets += size;
-					active_bullets -= size;
-					result.append_array(released_units_positions);
+					PoolVector2Array released_units_positions = pool->release_all_units_in_radius(from, distance_squared);
+					int size = released_units_positions.size();
+					if (size > 0)
+					{
+						available_bullets += size;
+						active_bullets -= size;
+						result.append_array(released_units_positions);
+					}
 				}
 			}
 		}
 	}
-
 	return result;
 }
 
