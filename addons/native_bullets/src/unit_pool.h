@@ -27,7 +27,7 @@ protected:
 	RID shared_area;
 	int32_t starting_shape_index;
 
-	Rect2 active_rect;
+	float max_lifetime = 1.0f;
 
 	template <typename T>
 	void _swap(T &a, T &b)

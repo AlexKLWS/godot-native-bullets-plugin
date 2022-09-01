@@ -17,7 +17,6 @@ collisions_enabled = true
 collision_layer = 1
 collision_mask = 1
 collision_shape = SubResource( 1 )
-active_rect = Rect2( 0, 0, 0, 0 )
 rotate = false
 is_clearable = true
 data = {

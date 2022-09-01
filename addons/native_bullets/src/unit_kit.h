@@ -44,8 +44,8 @@ public:
 	int32_t collision_layer = 0;
 	int32_t collision_mask = 0;
 	Ref<Shape> collision_shape;
-	// Controls where the bullets can live, if a bullet exits this rect, it will be removed.
-	Rect2 active_rect;
+	// Max bullet lifetime in seconds
+	float max_lifetime = 1.0f;
 	// If enabled, bullets will auto-rotate based on their direction of travel.
 	bool rotate = false;
 	// Controls whether the units of this kit are clearable in bulk
@@ -73,8 +73,8 @@ public:
 		register_property<UnitKit, Ref<Shape>>("collision_shape", &UnitKit::collision_shape,
 																					 Ref<Shape>(), GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT,
 																					 GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Shape2D");
-		register_property<UnitKit, Rect2>("active_rect", &UnitKit::active_rect, Rect2(),
-																			GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_NONE);
+		register_property<UnitKit, float>("max_lifetime", &UnitKit::max_lifetime, 1.0f,
+																			GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.001,256.0");
 		register_property<UnitKit, bool>("rotate", &UnitKit::rotate, false,
 																		 GODOT_METHOD_RPC_MODE_DISABLED, (godot_property_usage_flags)(GODOT_PROPERTY_USAGE_DEFAULT | GODOT_PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED),
 																		 GODOT_PROPERTY_HINT_NONE);

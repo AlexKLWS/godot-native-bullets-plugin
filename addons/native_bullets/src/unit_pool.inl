@@ -37,7 +37,7 @@ bool AbstractUnitPool<Kit, UnitType>::_process_unit(UnitType *bullet, float delt
 {
 	bullet->transform.set_origin(bullet->transform.get_origin() + bullet->velocity * delta);
 
-	if (!active_rect.has_point(bullet->transform.get_origin()))
+	if (bullet->lifetime >= kit->max_lifetime)
 	{
 		return true;
 	}
@@ -115,7 +115,6 @@ template <class Kit, class UnitType>
 int32_t AbstractUnitPool<Kit, UnitType>::_process(float delta)
 {
 
-	active_rect = kit->active_rect;
 	int32_t amount_variation = 0;
 
 	if (collisions_enabled)
