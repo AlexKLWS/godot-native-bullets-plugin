@@ -17,7 +17,7 @@ func _process(delta):
 		velocity.x += 1
 		
 	if(Input.is_action_just_pressed("ui_select")):
-		Bullets.release_all_units()
+		call_deferred("release_surrounding_bullets", position)
 	
 	if(velocity.length() > 0):
 		velocity = velocity.normalized() * speed
@@ -25,7 +25,10 @@ func _process(delta):
 	position += velocity * delta
 	global_position.x = clamp(global_position.x, 12, get_viewport_rect().size.x - 12)
 	global_position.y = clamp(global_position.y, 12, get_viewport_rect().size.y - 12)
-
+	
+	
+func release_surrounding_bullets(pos):
+	Bullets.release_all_units_in_radius(pos, 100.0);
 
 func _on_area_shape_entered(area_id, _area, area_shape, _local_shape):
 	var bullet_id = Bullets.get_bullet_from_shape(area_id, area_shape)

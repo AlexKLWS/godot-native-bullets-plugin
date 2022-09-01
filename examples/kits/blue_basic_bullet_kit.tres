@@ -17,10 +17,8 @@ collisions_enabled = true
 collision_layer = 1
 collision_mask = 1
 collision_shape = SubResource( 1 )
-use_viewport_as_active_rect = true
 active_rect = Rect2( 0, 0, 0, 0 )
 rotate = false
-unique_modulate_component = 0
 is_clearable = true
 data = {
 "hit_scene": ExtResource( 4 )

@@ -107,26 +107,6 @@ void AbstractUnitPool<Kit, UnitType>::_init(CanvasItem *canvas_parent, RID share
 			shapes_to_indices[i] = i;
 		}
 
-		Color color = Color(1.0f, 1.0f, 1.0f, 1.0f);
-		switch (kit->unique_modulate_component)
-		{
-		case 1: // Red
-			color.r = fmod((starting_shape_index + i) * 0.7213f, 1.0f);
-			break;
-		case 2: // Green
-			color.g = fmod((starting_shape_index + i) * 0.7213f, 1.0f);
-			break;
-		case 3: // Blue
-			color.b = fmod((starting_shape_index + i) * 0.7213f, 1.0f);
-			break;
-		case 4: // Alpha
-			color.a = fmod((starting_shape_index + i) * 0.7213f, 1.0f);
-			break;
-		default: // None or other values
-			break;
-		}
-		VisualServer::get_singleton()->canvas_item_set_modulate(bullet->item_rid, color);
-
 		_init_unit(bullet);
 	}
 }
@@ -134,14 +114,8 @@ void AbstractUnitPool<Kit, UnitType>::_init(CanvasItem *canvas_parent, RID share
 template <class Kit, class UnitType>
 int32_t AbstractUnitPool<Kit, UnitType>::_process(float delta)
 {
-	if (kit->use_viewport_as_active_rect)
-	{
-		active_rect = canvas_parent->get_viewport()->get_visible_rect();
-	}
-	else
-	{
-		active_rect = kit->active_rect;
-	}
+
+	active_rect = kit->active_rect;
 	int32_t amount_variation = 0;
 
 	if (collisions_enabled)
