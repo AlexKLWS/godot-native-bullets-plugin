@@ -2,7 +2,7 @@
 #define UNIT_H
 
 #include <Godot.hpp>
-#include <Transform2D.hpp>
+#include <Transform.hpp>
 
 using namespace godot;
 
@@ -23,21 +23,21 @@ public:
 	RID item_rid;
 	int32_t cycle = 0;
 	int32_t shape_index = -1;
-	Transform2D transform;
-	Vector2 velocity;
+	Transform transform;
+	Vector3 velocity;
 	float lifetime;
 	Variant data;
 
 	void _init() {}
 
 	RID get_item_rid() { return item_rid; }
-	void set_item_rid(RID value) { ERR_PRINT("Can't edit the item rid of bullets!"); }
+	void set_item_rid(RID value) { ERR_PRINT("Can't edit the item rid of units!"); }
 
 	int32_t get_cycle() { return cycle; }
-	void set_cycle(int32_t value) { ERR_PRINT("Can't edit the cycle of bullets!"); }
+	void set_cycle(int32_t value) { ERR_PRINT("Can't edit the cycle of units!"); }
 
 	int32_t get_shape_index() { return shape_index; }
-	void set_shape_index(int32_t value) { ERR_PRINT("Can't edit the shape index of bullets!"); }
+	void set_shape_index(int32_t value) { ERR_PRINT("Can't edit the shape index of units!"); }
 
 	static void _register_methods()
 	{
@@ -45,8 +45,8 @@ public:
 		register_property<Unit, int32_t>("cycle", &Unit::set_cycle, &Unit::get_cycle, 0);
 		register_property<Unit, int32_t>("shape_index", &Unit::set_shape_index, &Unit::get_shape_index, 0);
 
-		register_property<Unit, Transform2D>("transform", &Unit::transform, Transform2D());
-		register_property<Unit, Vector2>("velocity", &Unit::velocity, Vector2());
+		register_property<Unit, Transform>("transform", &Unit::transform, Transform());
+		register_property<Unit, Vector3>("velocity", &Unit::velocity, Vector3());
 		register_property<Unit, float>("lifetime", &Unit::lifetime, 0.0f);
 		register_property<Unit, Variant>("data", &Unit::data, Variant());
 	}
