@@ -32,14 +32,6 @@ hint_tooltip = "Viewport used as active rect."
 texture = ExtResource( 2 )
 stretch_mode = 6
 
-[node name="Rotating" type="TextureRect" parent="Icons"]
-margin_left = 40.0
-margin_right = 56.0
-margin_bottom = 180.0
-hint_tooltip = "Bullets rotate based on their direction of travel."
-texture = ExtResource( 2 )
-stretch_mode = 6
-
 [node name="Data" type="TextureRect" parent="Icons"]
 margin_left = 60.0
 margin_right = 76.0

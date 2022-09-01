@@ -135,11 +135,6 @@ class DynamicBulletsPool : public AbstractUnitPool<DynamicBulletKit, DynamicBull
 			// Return true if the bullet should be deleted.
 			return true;
 		}
-		// Rotate the bullet based on its velocity "rotate" is enabled.
-		if (kit->rotate)
-		{
-			bullet->transform.set_rotation(bullet->velocity.angle());
-		}
 		// Bullet is still alive, increase its lifetime.
 		bullet->lifetime += delta;
 		// Return false if the bullet should not be deleted yet.

@@ -46,8 +46,6 @@ public:
 	Ref<Shape> collision_shape;
 	// Max bullet lifetime in seconds
 	float max_lifetime = 1.0f;
-	// If enabled, bullets will auto-rotate based on their direction of travel.
-	bool rotate = false;
 	// Controls whether the units of this kit are clearable in bulk
 	bool is_clearable = true;
 	// Additional data the user can set via the editor.
@@ -75,9 +73,6 @@ public:
 																					 GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Shape2D");
 		register_property<UnitKit, float>("max_lifetime", &UnitKit::max_lifetime, 1.0f,
 																			GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.001,256.0");
-		register_property<UnitKit, bool>("rotate", &UnitKit::rotate, false,
-																		 GODOT_METHOD_RPC_MODE_DISABLED, (godot_property_usage_flags)(GODOT_PROPERTY_USAGE_DEFAULT | GODOT_PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED),
-																		 GODOT_PROPERTY_HINT_NONE);
 		register_property<UnitKit, bool>("is_clearable", &UnitKit::is_clearable, true,
 																		 GODOT_METHOD_RPC_MODE_DISABLED, (godot_property_usage_flags)(GODOT_PROPERTY_USAGE_DEFAULT | GODOT_PROPERTY_USAGE_UPDATE_ALL_IF_MODIFIED),
 																		 GODOT_PROPERTY_HINT_NONE);

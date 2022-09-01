@@ -33,6 +33,4 @@ func parse_property(object, type, path, hint, hint_text, usage):
 		return true
 	elif path == "collision_mask" and not object.collisions_enabled:
 		return true
-	elif path == "rotate":
-		pass
 	return false
