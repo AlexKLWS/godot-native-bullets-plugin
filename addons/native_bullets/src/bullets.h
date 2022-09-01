@@ -2,7 +2,7 @@
 #define BULLETS_H
 
 #include <Godot.hpp>
-#include <Node2D.hpp>
+#include <Spatial.hpp>
 #include <AtlasTexture.hpp>
 #include <Material.hpp>
 #include <Color.hpp>
@@ -17,9 +17,9 @@
 
 using namespace godot;
 
-class Bullets : public Node2D
+class Bullets : public Spatial
 {
-	GODOT_CLASS(Bullets, Node2D)
+	GODOT_CLASS(Bullets, Spatial)
 
 private:
 	// A pool internal representation with related properties.
@@ -42,7 +42,7 @@ private:
 	// Maps each UnitKit to the corresponding PoolKit index.
 	Dictionary kits_to_set_pool_indices;
 
-	Node *bullets_environment = nullptr;
+	Spatial *bullets_environment = nullptr;
 
 	int32_t available_bullets = 0;
 	int32_t active_bullets = 0;
@@ -64,16 +64,16 @@ public:
 
 	void _physics_process(float delta);
 
-	void mount(Node2D *bullets_environment);
-	void unmount(Node *bullets_environment);
-	Node *get_bullets_environment();
+	void mount(Spatial *bullets_environment);
+	void unmount(Spatial *bullets_environment);
+	Spatial *get_bullets_environment();
 
 	bool spawn_bullet(Ref<UnitKit> kit, Dictionary properties);
 	int32_t spawn_multiple_units(Ref<UnitKit> kit, Array set_of_dictionaries);
 	Variant obtain_bullet(Ref<UnitKit> kit);
 	bool release_bullet(Variant id);
-	PoolVector2Array release_all_units();
-	PoolVector2Array release_all_units_in_radius(Vector2 from, float distance);
+	PoolVector3Array release_all_units();
+	PoolVector3Array release_all_units_in_radius(Vector3 from, float distance);
 
 	bool is_bullet_valid(Variant id);
 	bool is_kit_valid(Ref<UnitKit> kit);

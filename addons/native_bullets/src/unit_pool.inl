@@ -1,7 +1,8 @@
 #include <Godot.hpp>
 #include <VisualServer.hpp>
-#include <Physics2DServer.hpp>
+#include <PhysicsServer.hpp>
 #include <Viewport.hpp>
+#include <World.hpp>
 #include <Font.hpp>
 
 #include "unit_pool.h"
@@ -18,18 +19,13 @@ void AbstractUnitPool<Kit, UnitType>::_enable_unit(UnitType *bullet)
 {
 	bullet->lifetime = 0.0f;
 
-	Rect2 texture_rect = Rect2(-kit->texture->get_size() / 2.0f, kit->texture->get_size());
-	RID texture_rid = kit->texture->get_rid();
-
-	VisualServer::get_singleton()->canvas_item_add_texture_rect(bullet->item_rid,
-																															texture_rect,
-																															texture_rid);
+	VisualServer::get_singleton()->instance_set_visible(bullet->item_rid, true);
 }
 
 template <class Kit, class UnitType>
 void AbstractUnitPool<Kit, UnitType>::_disable_unit(UnitType *bullet)
 {
-	VisualServer::get_singleton()->canvas_item_clear(bullet->item_rid);
+	VisualServer::get_singleton()->instance_set_visible(bullet->item_rid, false);
 }
 
 template <class Kit, class UnitType>
@@ -57,14 +53,13 @@ AbstractUnitPool<Kit, UnitType>::~AbstractUnitPool()
 		VisualServer::get_singleton()->free_rid(bullets[i]->item_rid);
 		bullets[i]->free();
 	}
-	VisualServer::get_singleton()->free_rid(canvas_item);
 
 	delete[] bullets;
 	delete[] shapes_to_indices;
 }
 
 template <class Kit, class UnitType>
-void AbstractUnitPool<Kit, UnitType>::_init(CanvasItem *canvas_parent, RID shared_area, int32_t starting_shape_index,
+void AbstractUnitPool<Kit, UnitType>::_init(Spatial *bullet_parent, RID shared_area, int32_t starting_shape_index,
 																						int32_t set_index, Ref<UnitKit> kit, int32_t pool_size, int32_t z_index)
 {
 
@@ -72,7 +67,7 @@ void AbstractUnitPool<Kit, UnitType>::_init(CanvasItem *canvas_parent, RID share
 	// otherwise the bullets would not collide with anything anyways.
 	this->collisions_enabled = kit->collisions_enabled && kit->collision_shape.is_valid() &&
 														 ((int64_t)kit->collision_layer + (int64_t)kit->collision_mask) != 0;
-	this->canvas_parent = canvas_parent;
+	this->bullet_parent = bullet_parent;
 	this->shared_area = shared_area;
 	this->starting_shape_index = starting_shape_index;
 	this->kit = kit;
@@ -85,24 +80,25 @@ void AbstractUnitPool<Kit, UnitType>::_init(CanvasItem *canvas_parent, RID share
 	bullets = new UnitType *[pool_size];
 	shapes_to_indices = new int32_t[pool_size];
 
-	canvas_item = VisualServer::get_singleton()->canvas_item_create();
-	VisualServer::get_singleton()->canvas_item_set_parent(canvas_item, canvas_parent->get_canvas_item());
-	VisualServer::get_singleton()->canvas_item_set_z_index(canvas_item, z_index);
+	Transform default_transform = Transform(Basis(), Vector3(0.0f, 0.0f, 0.0f));
 
 	for (int32_t i = 0; i < pool_size; i++)
 	{
 		UnitType *bullet = UnitType::_new();
 		bullets[i] = bullet;
 
-		bullet->item_rid = VisualServer::get_singleton()->canvas_item_create();
-		VisualServer::get_singleton()->canvas_item_set_parent(bullet->item_rid, canvas_item);
-		VisualServer::get_singleton()->canvas_item_set_material(bullet->item_rid, kit->material->get_rid());
+		bullet->item_rid = VisualServer::get_singleton()->instance_create();
+		VisualServer::get_singleton()->instance_set_scenario(bullet->item_rid, bullet_parent->get_world()->get_scenario());
+		VisualServer::get_singleton()->instance_set_base(bullet->item_rid, kit->mesh->get_rid());
+		VisualServer::get_singleton()->instance_geometry_set_material_override(bullet->item_rid, kit->material->get_rid());
+		VisualServer::get_singleton()->instance_set_transform(bullet->item_rid, default_transform);
+		VisualServer::get_singleton()->instance_set_visible(bullet->item_rid, false);
 
 		if (collisions_enabled)
 		{
 			RID shared_shape_rid = kit->collision_shape->get_rid();
 
-			Physics2DServer::get_singleton()->area_add_shape(shared_area, shared_shape_rid, Transform2D(), true);
+			PhysicsServer::get_singleton()->area_add_shape(shared_area, shared_shape_rid, Transform(), true);
 			bullet->shape_index = starting_shape_index + i;
 			shapes_to_indices[i] = i;
 		}
@@ -131,8 +127,8 @@ int32_t AbstractUnitPool<Kit, UnitType>::_process(float delta)
 				continue;
 			}
 
-			VisualServer::get_singleton()->canvas_item_set_transform(bullet->item_rid, bullet->transform);
-			Physics2DServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
+			VisualServer::get_singleton()->instance_set_transform(bullet->item_rid, bullet->transform);
+			PhysicsServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
 		}
 	}
 	else
@@ -149,7 +145,7 @@ int32_t AbstractUnitPool<Kit, UnitType>::_process(float delta)
 				continue;
 			}
 
-			VisualServer::get_singleton()->canvas_item_set_transform(bullet->item_rid, bullet->transform);
+			VisualServer::get_singleton()->instance_set_transform(bullet->item_rid, bullet->transform);
 		}
 	}
 	return amount_variation;
@@ -166,7 +162,7 @@ void AbstractUnitPool<Kit, UnitType>::spawn_unit(Dictionary properties)
 		UnitType *bullet = bullets[available_units];
 
 		if (collisions_enabled)
-			Physics2DServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, false);
+			PhysicsServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, false);
 
 		Array keys = properties.keys();
 		for (int32_t i = 0; i < keys.size(); i++)
@@ -174,9 +170,9 @@ void AbstractUnitPool<Kit, UnitType>::spawn_unit(Dictionary properties)
 			bullet->set(keys[i], properties[keys[i]]);
 		}
 
-		VisualServer::get_singleton()->canvas_item_set_transform(bullet->item_rid, bullet->transform);
+		VisualServer::get_singleton()->instance_set_transform(bullet->item_rid, bullet->transform);
 		if (collisions_enabled)
-			Physics2DServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
+			PhysicsServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
 
 		_enable_unit(bullet);
 	}
@@ -193,7 +189,7 @@ BulletID AbstractUnitPool<Kit, UnitType>::obtain_unit()
 		UnitType *bullet = bullets[available_units];
 
 		if (collisions_enabled)
-			Physics2DServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, false);
+			PhysicsServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, false);
 
 		_enable_unit(bullet);
 
@@ -218,14 +214,14 @@ bool AbstractUnitPool<Kit, UnitType>::release_unit(BulletID id)
 }
 
 template <class Kit, class UnitType>
-PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units()
+PoolVector3Array AbstractUnitPool<Kit, UnitType>::release_all_units()
 {
-	PoolVector2Array result = PoolVector2Array();
+	PoolVector3Array result = PoolVector3Array();
 	if (kit->is_clearable)
 	{
 		for (int32_t i = pool_size - 1; i >= available_units; i--)
 		{
-			Vector2 released_unit_pos = _release_unit(i);
+			Vector3 released_unit_pos = _release_unit(i);
 			result.append(released_unit_pos);
 			i += 1;
 		}
@@ -234,18 +230,18 @@ PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units()
 }
 
 template <class Kit, class UnitType>
-PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units_in_radius(Vector2 from, float distance_squared)
+PoolVector3Array AbstractUnitPool<Kit, UnitType>::release_all_units_in_radius(Vector3 from, float distance_squared)
 {
-	PoolVector2Array result = PoolVector2Array();
+	PoolVector3Array result = PoolVector3Array();
 	if (kit->is_clearable)
 	{
 		for (int32_t i = pool_size - 1; i >= available_units; i--)
 		{
 			UnitType *bullet = bullets[i];
-			Transform2D bullet_transform = bullet->transform;
+			Transform bullet_transform = bullet->transform;
 			if (bullet_transform.get_origin().distance_squared_to(from) < distance_squared)
 			{
-				Vector2 released_unit_pos = _release_unit(i);
+				Vector3 released_unit_pos = _release_unit(i);
 				result.append(released_unit_pos);
 				i += 1;
 			}
@@ -255,13 +251,13 @@ PoolVector2Array AbstractUnitPool<Kit, UnitType>::release_all_units_in_radius(Ve
 }
 
 template <class Kit, class UnitType>
-Vector2 AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
+Vector3 AbstractUnitPool<Kit, UnitType>::_release_unit(int32_t index)
 {
 	UnitType *bullet = bullets[index];
-	Transform2D bullet_transform = bullet->transform;
+	Transform bullet_transform = bullet->transform;
 
 	if (collisions_enabled)
-		Physics2DServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, true);
+		PhysicsServer::get_singleton()->area_set_shape_disabled(shared_area, bullet->shape_index, true);
 
 	_disable_unit(bullet);
 	bullet->cycle += 1;
@@ -328,9 +324,9 @@ void AbstractUnitPool<Kit, UnitType>::set_unit_property(BulletID id, String prop
 		if (property == "transform")
 		{
 			UnitType *bullet = bullets[bullet_index];
-			VisualServer::get_singleton()->canvas_item_set_transform(bullet->item_rid, bullet->transform);
+			VisualServer::get_singleton()->instance_set_transform(bullet->item_rid, bullet->transform);
 			if (collisions_enabled)
-				Physics2DServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
+				PhysicsServer::get_singleton()->area_set_shape_transform(shared_area, bullet->shape_index, bullet->transform);
 		}
 	}
 }

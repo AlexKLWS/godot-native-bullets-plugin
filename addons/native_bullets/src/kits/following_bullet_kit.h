@@ -1,9 +1,8 @@
 #ifndef FOLLOWING_BULLET_KIT_H
 #define FOLLOWING_BULLET_KIT_H
 
-#include <Texture.hpp>
 #include <PackedScene.hpp>
-#include <Node2D.hpp>
+#include <Spatial.hpp>
 #include <SceneTree.hpp>
 #include <cmath>
 
@@ -16,16 +15,16 @@ class FollowingBullet : public Unit
 {
 	GODOT_CLASS(FollowingBullet, Unit)
 public:
-	Node2D *target_node = nullptr;
+	Spatial *target_node = nullptr;
 
 	void _init() {}
 
-	void set_target_node(Node2D *node)
+	void set_target_node(Spatial *node)
 	{
 		target_node = node;
 	}
 
-	Node2D *get_target_node()
+	Spatial *get_target_node()
 	{
 		return target_node;
 	}
@@ -34,10 +33,10 @@ public:
 	{
 		// Registering an Object reference property with GODOT_PROPERTY_HINT_RESOURCE_TYPE and hint_string is just
 		// a way to tell the editor plugin the type of the property, so that it can be viewed in the UnitKit inspector.
-		register_property<FollowingBullet, Node2D *>("target_node",
-																								 &FollowingBullet::set_target_node,
-																								 &FollowingBullet::get_target_node, nullptr,
-																								 GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_NO_INSTANCE_STATE, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Node2D");
+		register_property<FollowingBullet, Spatial *>("target_node",
+																									&FollowingBullet::set_target_node,
+																									&FollowingBullet::get_target_node, nullptr,
+																									GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_NO_INSTANCE_STATE, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Spatial");
 	}
 };
 
@@ -48,13 +47,10 @@ class FollowingBulletKit : public UnitKit
 public:
 	UNIT_KIT(FollowingBulletsPool)
 
-	Ref<Texture> texture;
 	float bullets_turning_speed = 1.0f;
 
 	static void _register_methods()
 	{
-		register_property<FollowingBulletKit, Ref<Texture>>("texture", &FollowingBulletKit::texture, Ref<Texture>(),
-																												GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Texture");
 		register_property<FollowingBulletKit, float>("bullets_turning_speed", &FollowingBulletKit::bullets_turning_speed, 1.0f,
 																								 GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.0,128.0");
 
@@ -72,13 +68,8 @@ class FollowingBulletsPool : public AbstractUnitPool<FollowingBulletKit, Followi
 	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
-		Rect2 texture_rect = Rect2(-kit->texture->get_size() / 2.0f, kit->texture->get_size());
-		RID texture_rid = kit->texture->get_rid();
 
-		// Configure the bullet to draw the kit texture each frame.
-		VisualServer::get_singleton()->canvas_item_add_texture_rect(bullet->item_rid,
-																																texture_rect,
-																																texture_rid);
+		VisualServer::get_singleton()->instance_set_visible(bullet->item_rid, true);
 	}
 
 	// void _disable_unit(FollowingBullet* bullet); Use default implementation.
@@ -88,12 +79,12 @@ class FollowingBulletsPool : public AbstractUnitPool<FollowingBulletKit, Followi
 		if (bullet->target_node != nullptr)
 		{
 			// Find the rotation to the target node.
-			Vector2 to_target = bullet->target_node->get_global_position() - bullet->transform.get_origin();
+			Vector3 to_target = bullet->target_node->get_global_transform().get_origin() - bullet->transform.get_origin();
 			float rotation_to_target = bullet->velocity.angle_to(to_target);
 			float rotation_value = Math::min(kit->bullets_turning_speed * delta, std::abs(rotation_to_target));
 
 			// Apply the rotation, capped to the max turning speed.
-			bullet->velocity = bullet->velocity.rotated(Math::sign(rotation_to_target) * rotation_value);
+			bullet->velocity = bullet->velocity.rotated(bullet->transform.get_basis().get_euler().normalized(), Math::sign(rotation_to_target) * rotation_value);
 		}
 		// Apply velocity.
 		bullet->transform.set_origin(bullet->transform.get_origin() + bullet->velocity * delta);

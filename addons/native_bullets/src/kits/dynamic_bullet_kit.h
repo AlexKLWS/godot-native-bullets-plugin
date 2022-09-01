@@ -1,7 +1,6 @@
 #ifndef DYNAMIC_BULLET_KIT_H
 #define DYNAMIC_BULLET_KIT_H
 
-#include <Texture.hpp>
 #include <PackedScene.hpp>
 #include <Curve.hpp>
 
@@ -14,27 +13,27 @@ class DynamicBullet : public Unit
 {
 	GODOT_CLASS(DynamicBullet, Unit)
 public:
-	Transform2D starting_trasform;
+	Transform starting_trasform;
 	float starting_speed;
 
-	void set_transform(Transform2D transform)
+	void set_transform(Transform transform)
 	{
 		starting_trasform = transform;
 		this->transform = transform;
 	}
 
-	Transform2D get_transform()
+	Transform get_transform()
 	{
 		return transform;
 	}
 
-	void set_velocity(Vector2 velocity)
+	void set_velocity(Vector3 velocity)
 	{
 		starting_speed = velocity.length();
 		this->velocity = velocity;
 	}
 
-	Vector2 get_velocity()
+	Vector3 get_velocity()
 	{
 		return velocity;
 	}
@@ -43,14 +42,14 @@ public:
 
 	static void _register_methods()
 	{
-		register_property<DynamicBullet, Transform2D>("transform",
-																									&DynamicBullet::set_transform,
-																									&DynamicBullet::get_transform, Transform2D());
-		register_property<DynamicBullet, Transform2D>("starting_trasform",
-																									&DynamicBullet::starting_trasform, Transform2D());
-		register_property<DynamicBullet, Vector2>("velocity",
+		register_property<DynamicBullet, Transform>("transform",
+																								&DynamicBullet::set_transform,
+																								&DynamicBullet::get_transform, Transform());
+		register_property<DynamicBullet, Transform>("starting_trasform",
+																								&DynamicBullet::starting_trasform, Transform());
+		register_property<DynamicBullet, Vector3>("velocity",
 																							&DynamicBullet::set_velocity,
-																							&DynamicBullet::get_velocity, Vector2());
+																							&DynamicBullet::get_velocity, Vector3());
 		register_property<DynamicBullet, float>("starting_speed",
 																						&DynamicBullet::starting_speed, 0.0f);
 	}
@@ -63,7 +62,6 @@ class DynamicBulletKit : public UnitKit
 public:
 	UNIT_KIT(DynamicBulletsPool)
 
-	Ref<Texture> texture;
 	float lifetime_curves_span = 1.0f;
 	bool lifetime_curves_loop = true;
 	Ref<Curve> speed_multiplier_over_lifetime;
@@ -71,8 +69,6 @@ public:
 
 	static void _register_methods()
 	{
-		register_property<DynamicBulletKit, Ref<Texture>>("texture", &DynamicBulletKit::texture, Ref<Texture>(),
-																											GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Texture");
 		register_property<DynamicBulletKit, float>("lifetime_curves_span", &DynamicBulletKit::lifetime_curves_span, 1.0f,
 																							 GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.001,256.0");
 		register_property<DynamicBulletKit, bool>("lifetime_curves_loop", &DynamicBulletKit::lifetime_curves_loop, true,
@@ -96,13 +92,8 @@ class DynamicBulletsPool : public AbstractUnitPool<DynamicBulletKit, DynamicBull
 	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
-		Rect2 texture_rect = Rect2(-kit->texture->get_size() / 2.0f, kit->texture->get_size());
-		RID texture_rid = kit->texture->get_rid();
 
-		// Configure the bullet to draw the kit texture each frame.
-		VisualServer::get_singleton()->canvas_item_add_texture_rect(bullet->item_rid,
-																																texture_rect,
-																																texture_rid);
+		VisualServer::get_singleton()->instance_set_visible(bullet->item_rid, true);
 	}
 
 	// void _disable_unit(Bullet* bullet); Use default implementation.
@@ -123,9 +114,8 @@ class DynamicBulletsPool : public AbstractUnitPool<DynamicBulletKit, DynamicBull
 		if (kit->rotation_offset_over_lifetime.is_valid())
 		{
 			float rotation_offset = kit->rotation_offset_over_lifetime->interpolate(adjusted_lifetime);
-			float absolute_rotation = bullet->starting_trasform.get_rotation() + rotation_offset;
 
-			bullet->velocity = bullet->velocity.rotated(absolute_rotation - bullet->transform.get_rotation());
+			bullet->velocity = bullet->velocity.rotated(bullet->transform.get_basis().get_euler().normalized(), rotation_offset);
 		}
 
 		bullet->transform.set_origin(bullet->transform.get_origin() + bullet->velocity * delta);

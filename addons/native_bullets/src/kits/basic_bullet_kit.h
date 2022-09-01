@@ -1,7 +1,6 @@
 #ifndef BASIC_BULLET_KIT_H
 #define BASIC_BULLET_KIT_H
 
-#include <Texture.hpp>
 #include <PackedScene.hpp>
 
 #include "../unit_kit.h"
@@ -15,13 +14,8 @@ class BasicBulletKit : public UnitKit
 public:
 	UNIT_KIT(BasicBulletsPool)
 
-	Ref<Texture> texture;
-
 	static void _register_methods()
 	{
-		register_property<BasicBulletKit, Ref<Texture>>("texture", &BasicBulletKit::texture, Ref<Texture>(),
-																										GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Texture");
-
 		UNIT_KIT_REGISTRATION(BasicBulletKit, Unit)
 	}
 };
@@ -36,13 +30,8 @@ class BasicBulletsPool : public AbstractUnitPool<BasicBulletKit, Unit>
 	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
-		Rect2 texture_rect = Rect2(-kit->texture->get_size() / 2.0f, kit->texture->get_size());
-		RID texture_rid = kit->texture->get_rid();
 
-		// Configure the bullet to draw the kit texture each frame.
-		VisualServer::get_singleton()->canvas_item_add_texture_rect(bullet->item_rid,
-																																texture_rect,
-																																texture_rid);
+		VisualServer::get_singleton()->instance_set_visible(bullet->item_rid, true);
 	}
 
 	// void _disable_unit(Bullet* bullet); Use default implementation.

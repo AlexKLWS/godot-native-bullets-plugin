@@ -1,6 +1,6 @@
 #include <VisualServer.hpp>
-#include <Physics2DServer.hpp>
-#include <World2D.hpp>
+#include <PhysicsServer.hpp>
+#include <World.hpp>
 #include <Viewport.hpp>
 #include <OS.hpp>
 #include <Engine.hpp>
@@ -87,8 +87,8 @@ void Bullets::_clear_rids()
 {
 	for (int32_t i = 0; i < shared_areas.size(); i++)
 	{
-		Physics2DServer::get_singleton()->area_clear_shapes(shared_areas[i]);
-		Physics2DServer::get_singleton()->free_rid(shared_areas[i]);
+		PhysicsServer::get_singleton()->area_clear_shapes(shared_areas[i]);
+		PhysicsServer::get_singleton()->free_rid(shared_areas[i]);
 	}
 }
 
@@ -112,7 +112,7 @@ int32_t Bullets::_get_pool_index(int32_t set_index, int32_t bullet_index)
 	return -1;
 }
 
-void Bullets::mount(Node2D *bullets_environment)
+void Bullets::mount(Spatial *bullets_environment)
 {
 	if (bullets_environment == nullptr || this->bullets_environment == bullets_environment)
 	{
@@ -126,7 +126,7 @@ void Bullets::mount(Node2D *bullets_environment)
 	this->bullets_environment = bullets_environment;
 	this->bullets_environment->set("current", true);
 
-	VisualServer::get_singleton()->canvas_item_set_parent(this->get_canvas_item(), bullets_environment->get_canvas_item());
+	VisualServer::get_singleton()->instance_set_scenario(this, bullets_environment->get_world()->get_scenario());
 
 	Array unit_kits = bullets_environment->get("unit_kits");
 	Array pools_sizes = bullets_environment->get("pools_sizes");
@@ -184,11 +184,11 @@ void Bullets::mount(Node2D *bullets_environment)
 		if (layer_mask_keys[i].operator int64_t() != 0)
 		{
 			// This is a collisions-enabled set, create the shared area.
-			shared_area = Physics2DServer::get_singleton()->area_create();
-			Physics2DServer::get_singleton()->area_set_collision_layer(shared_area, first_kit->collision_layer);
-			Physics2DServer::get_singleton()->area_set_collision_mask(shared_area, first_kit->collision_mask);
-			Physics2DServer::get_singleton()->area_set_monitorable(shared_area, true);
-			Physics2DServer::get_singleton()->area_set_space(shared_area, bullets_environment->get_viewport()->find_world_2d()->get_space());
+			shared_area = PhysicsServer::get_singleton()->area_create();
+			PhysicsServer::get_singleton()->area_set_collision_layer(shared_area, first_kit->collision_layer);
+			PhysicsServer::get_singleton()->area_set_collision_mask(shared_area, first_kit->collision_mask);
+			PhysicsServer::get_singleton()->area_set_monitorable(shared_area, true);
+			PhysicsServer::get_singleton()->area_set_space(shared_area, bullets_environment->get_world()->get_space());
 
 			shared_areas.append(shared_area);
 			areas_to_pool_set_indices[shared_area] = i;
@@ -224,7 +224,7 @@ void Bullets::mount(Node2D *bullets_environment)
 	total_bullets = available_bullets;
 }
 
-void Bullets::unmount(Node *bullets_environment)
+void Bullets::unmount(Spatial *bullets_environment)
 {
 	if (this->bullets_environment == bullets_environment)
 	{
@@ -246,7 +246,7 @@ void Bullets::unmount(Node *bullets_environment)
 	}
 }
 
-Node *Bullets::get_bullets_environment()
+Spatial *Bullets::get_bullets_environment()
 {
 	return bullets_environment;
 }
@@ -333,9 +333,9 @@ bool Bullets::release_bullet(Variant id)
 	return result;
 }
 
-PoolVector2Array Bullets::release_all_units()
+PoolVector3Array Bullets::release_all_units()
 {
-	PoolVector2Array result = PoolVector2Array();
+	PoolVector3Array result = PoolVector3Array();
 	if (available_bullets > 0)
 	{
 		for (int32_t x = 0; x < pool_sets.size(); ++x)
@@ -345,7 +345,7 @@ PoolVector2Array Bullets::release_all_units()
 				UnitPool *pool = pool_sets[x].pools[y].pool.get();
 				if (pool->get_available_units() > 0)
 				{
-					PoolVector2Array released_units_positions = pool->release_all_units();
+					PoolVector3Array released_units_positions = pool->release_all_units();
 					int size = released_units_positions.size();
 					if (size > 0)
 					{
@@ -360,9 +360,9 @@ PoolVector2Array Bullets::release_all_units()
 	return result;
 }
 
-PoolVector2Array Bullets::release_all_units_in_radius(Vector2 from, float distance)
+PoolVector3Array Bullets::release_all_units_in_radius(Vector3 from, float distance)
 {
-	PoolVector2Array result = PoolVector2Array();
+	PoolVector3Array result = PoolVector3Array();
 	if (available_bullets > 0)
 	{
 		float distance_squared = distance * distance;
@@ -373,7 +373,7 @@ PoolVector2Array Bullets::release_all_units_in_radius(Vector2 from, float distan
 				UnitPool *pool = pool_sets[x].pools[y].pool.get();
 				if (pool->get_available_units() > 0)
 				{
-					PoolVector2Array released_units_positions = pool->release_all_units_in_radius(from, distance_squared);
+					PoolVector3Array released_units_positions = pool->release_all_units_in_radius(from, distance_squared);
 					int size = released_units_positions.size();
 					if (size > 0)
 					{

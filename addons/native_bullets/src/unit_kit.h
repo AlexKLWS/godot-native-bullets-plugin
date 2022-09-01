@@ -1,11 +1,11 @@
 #ifndef UNIT_KIT_H
 #define UNIT_KIT_H
 
+#include <Mesh.hpp>
 #include <Godot.hpp>
 #include <Resource.hpp>
 #include <Shape.hpp>
 #include <Material.hpp>
-#include <Texture.hpp>
 #include <PackedScene.hpp>
 #include <Script.hpp>
 
@@ -36,6 +36,7 @@ class UnitKit : public Resource
 	GODOT_CLASS(UnitKit, Resource)
 
 public:
+	Ref<Mesh> mesh;
 	// The material used to render each unit.
 	Ref<Material> material;
 	// Controls whether collisions with other objects are enabled. Turning it off increases performance.
@@ -58,6 +59,8 @@ public:
 
 	static void _register_methods()
 	{
+		register_property<UnitKit, Ref<Mesh>>("mesh", &UnitKit::mesh, Ref<Mesh>(),
+																					GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Mesh");
 		register_property<UnitKit, Ref<Material>>("material", &UnitKit::material,
 																							Ref<Material>(), GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT,
 																							GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Material");

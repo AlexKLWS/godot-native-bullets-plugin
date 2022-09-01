@@ -6,6 +6,7 @@
 #include <AtlasTexture.hpp>
 #include <Material.hpp>
 #include <Color.hpp>
+#include <Spatial.hpp>
 
 #include "unit.h"
 #include "unit_kit.h"
@@ -22,12 +23,10 @@ protected:
 	int32_t units_to_handle = 0;
 	bool collisions_enabled;
 
-	CanvasItem *canvas_parent;
-	RID canvas_item;
+	Spatial *bullet_parent;
+	RID pool_3d_instance;
 	RID shared_area;
 	int32_t starting_shape_index;
-
-	float max_lifetime = 1.0f;
 
 	template <typename T>
 	void _swap(T &a, T &b)
@@ -44,7 +43,7 @@ public:
 	UnitPool();
 	virtual ~UnitPool();
 
-	virtual void _init(CanvasItem *canvas_parent, RID shared_area, int32_t starting_shape_index,
+	virtual void _init(Spatial *bullet_parent, RID shared_area, int32_t starting_shape_index,
 										 int32_t set_index, Ref<UnitKit> kit, int32_t pool_size, int32_t z_index) = 0;
 
 	int32_t get_available_units();
@@ -55,8 +54,8 @@ public:
 	virtual void spawn_unit(Dictionary properties) = 0;
 	virtual BulletID obtain_unit() = 0;
 	virtual bool release_unit(BulletID id) = 0;
-	virtual PoolVector2Array release_all_units() = 0;
-	virtual PoolVector2Array release_all_units_in_radius(Vector2 from, float distance_squared) = 0;
+	virtual PoolVector3Array release_all_units() = 0;
+	virtual PoolVector3Array release_all_units_in_radius(Vector3 from, float distance_squared) = 0;
 	virtual bool is_unit_valid(BulletID id) = 0;
 
 	virtual bool does_unit_exist(int32_t shape_index) = 0;
@@ -79,13 +78,13 @@ protected:
 	virtual inline void _disable_unit(UnitType *bullet);
 	virtual inline bool _process_unit(UnitType *bullet, float delta);
 
-	inline Vector2 _release_unit(int32_t index);
+	inline Vector3 _release_unit(int32_t index);
 
 public:
 	AbstractUnitPool() {}
 	virtual ~AbstractUnitPool();
 
-	virtual void _init(CanvasItem *canvas_parent, RID shared_area, int32_t starting_shape_index,
+	virtual void _init(Spatial *bullet_parent, RID shared_area, int32_t starting_shape_index,
 										 int32_t set_index, Ref<UnitKit> kit, int32_t pool_size, int32_t z_index) override;
 
 	virtual int32_t _process(float delta) override;
@@ -93,8 +92,8 @@ public:
 	virtual void spawn_unit(Dictionary properties) override;
 	virtual BulletID obtain_unit() override;
 	virtual bool release_unit(BulletID id) override;
-	virtual PoolVector2Array release_all_units() override;
-	virtual PoolVector2Array release_all_units_in_radius(Vector2 from, float distance_squared) override;
+	virtual PoolVector3Array release_all_units() override;
+	virtual PoolVector3Array release_all_units_in_radius(Vector3 from, float distance_squared) override;
 	virtual bool is_unit_valid(BulletID id) override;
 
 	virtual bool does_unit_exist(int32_t shape_index) override;

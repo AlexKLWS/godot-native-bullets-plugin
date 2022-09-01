@@ -1,10 +1,9 @@
 #ifndef FOLLOWING_DYNAMIC_BULLET_KIT_H
 #define FOLLOWING_DYNAMIC_BULLET_KIT_H
 
-#include <Texture.hpp>
 #include <PackedScene.hpp>
 #include <Curve.hpp>
-#include <Node2D.hpp>
+#include <Spatial.hpp>
 
 #include "../unit_kit.h"
 
@@ -15,26 +14,26 @@ class FollowingDynamicBullet : public Unit
 {
 	GODOT_CLASS(FollowingDynamicBullet, Unit)
 public:
-	Node2D *target_node = nullptr;
+	Spatial *target_node = nullptr;
 	float starting_speed;
 
-	void set_target_node(Node2D *node)
+	void set_target_node(Spatial *node)
 	{
 		target_node = node;
 	}
 
-	Node2D *get_target_node()
+	Spatial *get_target_node()
 	{
 		return target_node;
 	}
 
-	void set_velocity(Vector2 velocity)
+	void set_velocity(Vector3 velocity)
 	{
 		starting_speed = velocity.length();
 		this->velocity = velocity;
 	}
 
-	Vector2 get_velocity()
+	Vector3 get_velocity()
 	{
 		return velocity;
 	}
@@ -45,13 +44,13 @@ public:
 	{
 		// Registering an Object reference property with GODOT_PROPERTY_HINT_RESOURCE_TYPE and hint_string is just
 		// a way to tell the editor plugin the type of the property, so that it can be viewed in the UnitKit inspector.
-		register_property<FollowingDynamicBullet, Node2D *>("target_node",
-																												&FollowingDynamicBullet::set_target_node,
-																												&FollowingDynamicBullet::get_target_node, nullptr,
-																												GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_NO_INSTANCE_STATE, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Node2D");
-		register_property<FollowingDynamicBullet, Vector2>("velocity",
+		register_property<FollowingDynamicBullet, Spatial *>("target_node",
+																												 &FollowingDynamicBullet::set_target_node,
+																												 &FollowingDynamicBullet::get_target_node, nullptr,
+																												 GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_NO_INSTANCE_STATE, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Spatial");
+		register_property<FollowingDynamicBullet, Vector3>("velocity",
 																											 &FollowingDynamicBullet::set_velocity,
-																											 &FollowingDynamicBullet::get_velocity, Vector2());
+																											 &FollowingDynamicBullet::get_velocity, Vector3());
 		register_property<FollowingDynamicBullet, float>("starting_speed",
 																										 &FollowingDynamicBullet::starting_speed, 0.0f);
 	}
@@ -64,7 +63,6 @@ class FollowingDynamicBulletKit : public UnitKit
 public:
 	UNIT_KIT(FollowingDynamicBulletsPool)
 
-	Ref<Texture> texture;
 	float lifetime_curves_span = 1.0f;
 	float distance_curves_span = 128.0f;
 	bool lifetime_curves_loop = true;
@@ -75,8 +73,6 @@ public:
 
 	static void _register_methods()
 	{
-		register_property<FollowingDynamicBulletKit, Ref<Texture>>("texture", &FollowingDynamicBulletKit::texture, Ref<Texture>(),
-																															 GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Texture");
 		register_property<FollowingDynamicBulletKit, float>("lifetime_curves_span", &FollowingDynamicBulletKit::lifetime_curves_span, 1.0f,
 																												GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.001,256.0");
 		register_property<FollowingDynamicBulletKit, float>("distance_curves_span", &FollowingDynamicBulletKit::distance_curves_span, 128.0f,
@@ -111,13 +107,8 @@ class FollowingDynamicBulletsPool : public AbstractUnitPool<FollowingDynamicBull
 	{
 		// Reset the bullet lifetime.
 		bullet->lifetime = 0.0f;
-		Rect2 texture_rect = Rect2(-kit->texture->get_size() / 2.0f, kit->texture->get_size());
-		RID texture_rid = kit->texture->get_rid();
 
-		// Configure the bullet to draw the kit texture each frame.
-		VisualServer::get_singleton()->canvas_item_add_texture_rect(bullet->item_rid,
-																																texture_rect,
-																																texture_rid);
+		VisualServer::get_singleton()->instance_set_visible(bullet->item_rid, true);
 	}
 
 	// void _disable_unit(FollowingDynamicBullet* bullet); Use default implementation.
@@ -134,7 +125,7 @@ class FollowingDynamicBulletsPool : public AbstractUnitPool<FollowingDynamicBull
 
 		if (kit->turning_speed.is_valid() && bullet->target_node != nullptr)
 		{
-			Vector2 to_target = bullet->target_node->get_global_position() - bullet->transform.get_origin();
+			Vector3 to_target = bullet->target_node->get_transform().get_origin() - bullet->transform.get_origin();
 			// If based on lifetime.
 			if (kit->turning_speed_control_mode == 0)
 			{
@@ -163,7 +154,7 @@ class FollowingDynamicBulletsPool : public AbstractUnitPool<FollowingDynamicBull
 			// If based on target node: 1 or 2.
 			else if (kit->speed_control_mode < 3 && bullet->target_node != nullptr)
 			{
-				Vector2 to_target = bullet->target_node->get_global_position() - bullet->transform.get_origin();
+				Vector3 to_target = bullet->target_node->get_transform().get_origin() - bullet->transform.get_origin();
 				// If based on distance to target.
 				if (kit->speed_control_mode == 1)
 				{
@@ -186,11 +177,11 @@ class FollowingDynamicBulletsPool : public AbstractUnitPool<FollowingDynamicBull
 		if (bullet_turning_speed != 0.0 && bullet->target_node != nullptr)
 		{
 			// Find the rotation to the target node.
-			Vector2 to_target = bullet->target_node->get_global_position() - bullet->transform.get_origin();
+			Vector3 to_target = bullet->target_node->get_transform().get_origin() - bullet->transform.get_origin();
 			float rotation_to_target = bullet->velocity.angle_to(to_target);
 			float rotation_value = Math::min(bullet_turning_speed * delta, std::abs(rotation_to_target));
 			// Apply the rotation, capped to the max turning speed.
-			bullet->velocity = bullet->velocity.rotated(Math::sign(rotation_to_target) * rotation_value);
+			bullet->velocity = bullet->velocity.rotated(bullet->transform.get_basis().get_euler().normalized(), Math::sign(rotation_to_target) * rotation_value);
 		}
 
 		bullet->transform.set_origin(bullet->transform.get_origin() + bullet->velocity * delta);
