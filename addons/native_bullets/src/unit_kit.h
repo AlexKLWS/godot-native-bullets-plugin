@@ -73,7 +73,7 @@ public:
 																				GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_LAYERS_2D_PHYSICS);
 		register_property<UnitKit, Ref<Shape>>("collision_shape", &UnitKit::collision_shape,
 																					 Ref<Shape>(), GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT,
-																					 GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Shape2D");
+																					 GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Shape");
 		register_property<UnitKit, float>("max_lifetime", &UnitKit::max_lifetime, 1.0f,
 																			GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RANGE, "0.001,256.0");
 		register_property<UnitKit, bool>("is_clearable", &UnitKit::is_clearable, true,

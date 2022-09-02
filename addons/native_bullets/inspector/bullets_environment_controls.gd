@@ -6,20 +6,14 @@ var object: BulletsEnvironment
 var index: int
 var editor_theme: Theme
 var icon_collisions: TextureRect
-var icon_viewport: TextureRect
-var icon_rotating: TextureRect
 var icon_data: TextureRect
 
 
 func _ready():
 	icon_collisions = $Icons/CollisionShape
-	icon_viewport = $Icons/ViewportAsActive
-	icon_rotating = $Icons/Rotating
 	icon_data = $Icons/Data
 	
 	icon_collisions.texture = editor_theme.get_icon("Area2D", "EditorIcons")
-	icon_viewport.texture = editor_theme.get_icon("ViewportContainer", "EditorIcons")
-	icon_rotating.texture = editor_theme.get_icon("ToolRotate", "EditorIcons")
 	icon_data.texture = editor_theme.get_icon("FileList", "EditorIcons")
 	
 	_draw()
